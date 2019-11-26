@@ -11,3 +11,5 @@ The Docker-compatible format of runtime will ease container portability across d
 
 ## This repository
 This area is meant for learning materials, examples, and sharing ideas about containerization of high-performance weather-simulation codes during the first Container Hackathon for Modellers between Dec. 3 - Dec 5 2019 in Lugano, Switzerland.
+
+Head over to the (Wiki)[https://github.com/eth-cscs/ContainerHackathon/wiki] for further details.

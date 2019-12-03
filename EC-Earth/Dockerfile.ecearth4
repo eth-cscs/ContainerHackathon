@@ -1,0 +1,38 @@
+# Start from docker.io/ubuntu:latest + ScriptEngine
+FROM ufla/scriptengine:latest
+
+MAINTAINER Uwe Fladrich <uwe.fladrich@smhi.se>
+
+# Need openssh-server for openmpi?
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        gcc gfortran \
+        build-essential \
+        openssh-client \
+        openmpi-bin openmpi-common libopenmpi2 libopenmpi-dev \
+        libnetcdf-dev libnetcdff-dev libhdf5-dev \
+        libeccodes-dev libeccodes-data libeccodes-tools \
+        libopenblas-base libopenblas-dev \
+    &&  rm -rf /var/lib/apt/lists/*
+ADD ifs_samples.tgz /usr/share/eccodes
+
+# USER ecearth
+RUN groupadd -g 137 ecearth \
+    && useradd -ms /bin/bash -u 62030 -g 137 ecearth
+WORKDIR /home/ecearth
+
+# Add and compile EC-Earth4 sources
+ADD ecearth.tar /home/ecearth
+RUN se sources/se/user-settings.yml \
+       sources/se/platforms/ubuntu-gcc-openmpi.yml \
+       sources/se/compile-oasis.yml \
+       sources/se/compile-oifs.yml \
+    && find sources \( -name \*.a -o -name \*.o -o -name \*.mod \) -delete
+
+# Prepare rundir
+RUN mkdir /home/ecearth/rundir \
+    && chown -R ecearth:ecearth /home/ecearth/rundir
+
+# Start run
+USER ecearth
+WORKDIR /home/ecearth/rundir
+CMD ["se", "../control/run.yml"]

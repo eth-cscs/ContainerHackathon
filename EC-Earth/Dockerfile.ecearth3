@@ -1,0 +1,54 @@
+FROM ubuntu:disco
+
+MAINTAINER Pablo Echevarria <pablo.echevarria@bsc.es>
+
+
+RUN apt-get update && apt-get install -y \
+        build-essential             \
+        wget                        \
+        gcc gfortran \
+        openssh-client \
+	libnetcdf-dev libnetcdff-dev libhdf5-dev \
+        libeccodes-dev libeccodes-data libeccodes-tools \
+        libopenblas-base libopenblas-dev \
+	vim\
+        --no-install-recommends     \
+    && rm -rf /var/lib/apt/lists/*
+
+
+RUN wget -q http://www.mpich.org/static/downloads/3.1.4/mpich-3.1.4.tar.gz \
+    && tar xf mpich-3.1.4.tar.gz \
+    && cd mpich-3.1.4 \
+    && ./configure --enable-fast=all,O3 --prefix=/usr \
+    && make -j$(nproc) \
+    && make install \
+    && ldconfig \
+    && cd .. \
+    && rm -rf mpich-3.1.4 \
+    && rm mpich-3.1.4.tar.gz
+
+
+# USER ecearth
+RUN groupadd -g 137 ecearth \
+    && useradd -ms /bin/bash -u 62030 -g 137 ecearth
+WORKDIR /home/ecearth
+
+# Source code
+ADD ec-earth.tar /home/ecearth
+
+# GRIBEX LIB
+ADD gribex_000370.tar.gz /home/ecearth
+
+#RUN cd gribex_000370/  \
+#&& ./build_library \
+#&& cd examples/ \
+#&& make \
+#&& ln -s ../data/ . \
+#&& ./test.sh 
+
+
+
+
+
+
+

@@ -1,7 +1,15 @@
+# Run with:
+#   docker build -t <tag> --build-arg uid=<user_id> gid=<group_id> .
+# where user and group ids match the user on the system where you run the
+# container
+
 # Start from docker.io/ubuntu:latest + ScriptEngine
 FROM ufla/scriptengine:latest
 
 MAINTAINER Uwe Fladrich <uwe.fladrich@smhi.se>
+
+ARG uid=1000
+ARG gid=1000
 
 # Need openssh-server for openmpi?
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -16,8 +24,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ADD ifs_samples.tgz /usr/share/eccodes
 
 # USER ecearth
-RUN groupadd -g 137 ecearth \
-    && useradd -ms /bin/bash -u 62030 -g 137 ecearth
+RUN groupadd -g $gid ecearth \
+    && useradd -ms /bin/bash -u $uid -g $gid ecearth
 WORKDIR /home/ecearth
 
 # Add and compile EC-Earth4 sources

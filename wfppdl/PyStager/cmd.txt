@@ -1,0 +1,20 @@
+
+# build a docker image 
+sudo docker build -t wfppdl/pystager:v1.01 -f Dockerfile .
+
+
+
+# check available docker images 
+sudo docker images
+
+
+#simple run with defined endpoint 
+sudo docker run -ti --entrypoint "sh" wfppdl/pystager:v1.0
+
+# run docker with mounted volume 
+sudo docker run -ti \
+--entrypoint "bash" \
+--mount type=bind,source=/home/amirpasha/Move_test,target=/app \
+wfppdl/pystager:v1.01
+
+

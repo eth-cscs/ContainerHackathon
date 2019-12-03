@@ -35,7 +35,7 @@ nn_itend=1080
 !-----------------------------------------------------------------------
 &namusr_def    !   GYRE user defined namelist  
 !-----------------------------------------------------------------------
-   nn_GYRE     =     1     !  GYRE resolution [1/degrees]
+   nn_GYRE     =     8     !  GYRE resolution [1/degrees]
    ln_bench    = .true.   !  ! =T benchmark with gyre: the gridsize is kept constant
    jpkglo      =    31     !  number of model levels
 /

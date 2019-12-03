@@ -1,0 +1,299 @@
+FROM nvidia/cuda:10.1-devel
+#{{{ FROM ubuntu:bionic
+#FROM ethcscs/mpich:ub1804_cuda101_mpi314_osu
+#docker pull nvidia/cuda:10.1-devel
+#MAINTAINER Giorgio
+
+# Ubuntu/18.04.3
+# gnu/7.4.0
+# MPICH/3.3a2
+
+# https://wiki.ubuntu.com/Releases
+# https://gitlab.com/nvidia/container-images/cuda/blob/master/doc/supported-tags.md
+#
+# DD=Dockerfile.ub1804_mpich314
+# VV=nemo/ub1804:mpich314
+# docker build -f ./$DD -t $VV .
+# docker run --rm -it $VV bash
+# mpirun -np 2 /usr/local/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw
+#
+# mac: docker image save $VV -o nemo.tar # + scp
+# dom: sarus load nemo.tar nemo/ub1804
+#
+# #VV=sphexa/mpich:ub1804_cuda101_mpi314_sphexa_ci
+# #docker build -f ./$DD -t $VV --build-arg branchname=master .
+# docker push $VV
+#
+# docker run --rm $VV
+# docker run --rm $VV bash -c "./gnu7/omp.app -s 1 -n 10"
+# docker run --rm $VV bash -c "mpirun -np 2 ./gnu7/mpi+omp.app -s 1 -n 20"
+# docker run --rm -it $VV bash
+# docker run $VV cat /etc/os-release
+# FROM ethcscs/mpich:ub1804_cuda101_mpi314_osu
+# PS1="\[\033[31m\]\u:\w/$ \[\e[0;36m\]"
+# vim.tiny ~/.bashrc
+#}}}
+
+#{{{ apt:
+RUN apt update --quiet \
+    && apt install --quiet -y --no-install-recommends wget make cmake m4 curl \
+    zlib1g-dev subversion gcc g++ gfortran file unzip liburi-perl openssh-client vim-tiny \
+    && ln -fs /usr/bin/make /usr/bin/gmake
+#{{{ apt
+# RUN apt-get update \
+#     && apt-get install -y sudo
+# # add a new user
+# RUN adduser docker-nemo --gecos "Docker Nemo,1,0000,0001" --disabled-password
+# RUN echo "docker-nemo:password" | chpasswd \
+#     && usermod -aG sudo docker-nemo
+# # update and install dependencies
+# RUN apt-get install -y \
+#             software-properties-common \
+#             wget \
+#             locate \
+#             && add-apt-repository -y ppa:ubuntu-toolchain-r/test \
+#             && apt-get update \
+#             && apt-get install -y \
+#             make \
+#             git \
+#             curl \
+#             vim \
+#             && apt-get install -y cmake \
+#             && apt-get install -y \
+#             gcc \
+#             g++ \
+#             gfortran
+#}}}
+#}}}
+
+#{{{ mpich/3.1.4:
+RUN echo \
+    && mkdir -p /tmp/M ;cd /tmp/M \
+    && wget -q http://www.mpich.org/static/downloads/3.1.4/mpich-3.1.4.tar.gz \
+    && tar xf mpich-3.1.4.tar.gz \
+    && cd mpich-3.1.4 \
+    && ./configure --prefix=/usr \
+    && make -j6 \
+    && make install \
+    && ldconfig 
+#no!:    && apt install --quiet -y --no-install-recommends libmpich-dev mpich wget make \
+#    && apt install --quiet -y --no-install-recommends libmpich-dev mpich wget make \
+#{{{ mpich/ubuntu:
+# RUN apt-get install -y \
+#     libmpich-dev \
+#     libmpich12 \
+#     mpich \
+#     mpich-doc
+#}}}
+
+#{{{ osu-micro-benchmarks:
+# RUN cd /tmp \
+#     && wget http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-5.6.2.tar.gz \
+#     && tar xf osu-micro-benchmarks-5.6.2.tar.gz \
+#     && cd osu-micro-benchmarks-5.6.2 \
+#     && ./configure CC=$(which mpicc) \
+# #    && ./configure --prefix=/usr/local CC=$(which mpicc) CFLAGS=-O3 \
+#     && make -j2 \
+#     && make install \
+#     && cd .. \
+#     && rm -rf osu-micro-benchmarks-5.6.2*
+#}}}
+#}}}
+
+#{{{ hdf5/1.8:  apt install libhdf5-mpich-dev
+RUN echo \
+    && mkdir -p /tmp/H ;cd /tmp/H \
+    && wget -q https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.bz2 \
+    && tar xf hdf5-1.8.21.tar.bz2 \
+    && cd hdf5-1.8.21 \
+    && ./configure --enable-parallel --enable-fortran --prefix=/usr \
+    && make -j6 install \
+    && ldconfig
+#
+# RUN apt-get install -y \
+#     libhdf5-doc \
+#     libhdf5-100 \
+#     libhdf5-cpp-100 \
+#     libhdf5-serial-dev \
+#     libhdf5-jni \
+#     libhdf5-java \
+#     libhdf5-dev \
+#     libhdf5-mpi-dev \
+#     libhdf5-mpich-100 \
+#     libhdf5-mpich-dev \
+#     hdf5-tools \
+#     hdf5-helpers
+#}}}
+
+#{{{ netcdf/4: libnetcdff-dev libpnetcdf-dev
+# apt install -y m4 curl zlib1g-dev
+RUN echo \
+    && mkdir -p /tmp/NC ;cd /tmp/NC \
+    && wget -q https://github.com/Unidata/netcdf-c/archive/v4.7.2.tar.gz \
+    && tar xf v4.7.2.tar.gz ;cd netcdf-c-4.7.2/ \
+    # -I/tmp/NC/netcdf-c-4.7.2/include
+    # 
+    # /usr/lib/x86_64-linux-gnu/netcdf/mpi/include/netcdf_par.h	libnetcdf-mpi-dev
+    # /usr/lib/x86_64-linux-gnu/netcdf/pnetcdf/include/netcdf_par.h	libnetcdf-pnetcdf-dev
+    # 
+    && ./configure --prefix=/usr --disable-dap \
+    && make -j6 install \
+    && nc-config --all 
+#
+RUN echo \
+    && mkdir -p /tmp/NF ;cd /tmp/NF \
+    && wget -q https://github.com/Unidata/netcdf-fortran/archive/v4.5.2.tar.gz \
+    && tar xf v4.5.2.tar.gz ;cd netcdf-fortran-4.5.2/ \
+    && ./configure --prefix=/usr FC=mpif90 \
+    && make -j6 install \
+    && nf-config --all \
+    && ldconfig
+#
+# RUN apt-get install -y \
+#     libnetcdf-dev \
+#     libnetcdf13 \
+#     netcdf-bin \
+#     netcdf-doc \
+#     && apt-get install -y \
+#     libpnetcdf-dev \
+#     libpnetcdf0d \
+#     pnetcdf-bin \
+#     && apt-get install -y \
+#     libnetcdff-dbg \
+#     libnetcdff-dev \
+#     libnetcdff-doc \
+#     libnetcdff6
+#}}}
+
+#{{{ pnetcdf/1.12:
+# apt install -y m4 curl zlib1g-dev
+RUN echo \
+    && mkdir -p /tmp/PN ;cd /tmp/PN \
+    && wget -q https://parallel-netcdf.github.io/Release/pnetcdf-1.12.0.tar.gz \
+    && tar xf pnetcdf-1.12.0.tar.gz ;cd pnetcdf-1.12.0 \
+    && ./configure MPICC=mpicc MPICXX=mpicxx MPIF90=mpif90 \
+    && make -j6 install \
+    && ldconfig \
+    && pnetcdf-config --all
+#}}}
+
+#{{{ xios/2.5:
+COPY ./utility/xios.patch /root
+
+RUN echo \
+    && mkdir -p /tmp/X ;cd /tmp/X \
+    && wget -q 'http://forge.ipsl.jussieu.fr/ioserver/changeset/1766/XIOS/branchs/xios-2.5?old_path=%2F&format=zip' -O xios-2.5.zip \
+    # && apt install -y liburi-perl make \
+    && unzip -q xios-2.5.zip \
+    && cd XIOS/branchs/xios-2.5/ \
+    && patch -p0 -i $HOME/xios.patch && chmod u+x ./make_xios \
+    && ./make_xios --prod --arch GCC_LINUX --netcdf_lib netcdf4_par --job 2
+
+#{{{ RUN unzip xios-2.5.zip \
+#     && cd XIOS/branchs/xios-2.5
+# COPY ./utility/arch-X64_Docker.* /home/docker-nemo/library/XIOS/branchs/xios-2.5/arch/
+# WORKDIR /home/docker-nemo/library/XIOS/branchs/xios-2.5
+# RUN chmod u+x make_xios \
+#     && ./make_xios --prod --arch X64_Docker --netcdf_lib netcdf4_par \
+#}}}
+#}}}
+
+#{{{ NEMO/4.0.1:
+#{{{
+# USER docker-nemo
+# RUN cd \
+#     && mkdir library \
+#     && cd library \
+#     && wget "http://forge.ipsl.jussieu.fr/ioserver/changeset/1766/XIOS/branchs/xios-2.5?old_path=%2F&format=zip" \
+#     && mv 'xios-2.5?old_path=%2F&format=zip' xios-2.5.zip
+# WORKDIR /home/docker-nemo/library
+#}}}
+
+COPY ./utility/nemo_release-4.0.1_lite.tar.gz /root/
+COPY ./utility/nemo.patch /root/
+COPY ./utility/Fmake_config.sh /root/
+
+RUN echo \
+    && mkdir -p ~/work/nemo \
+    && cd ~/work/nemo \
+    && tar xf /root/nemo_release-4.0.1_lite.tar.gz \
+    # && svn co http://forge.ipsl.jussieu.fr/nemo/svn/NEMO/releases/release-4.0.1
+    && cd ~/work/nemo/ \
+    && patch -p0 -i /root/nemo.patch \
+    && cd release-4.0.1 \
+    && cp /root/Fmake_config.sh ./mk/ \
+    && ./makenemo -m linux_gfortran -n GYRE_PISCES_CSCS -r GYRE_PISCES
+
+#{{{
+# COPY    ./utility/arch-gfortran_docker.fcm /home/docker-nemo/work/nemo/release-4.0.1/arch/
+# WORKDIR /home/docker-nemo/work/nemo/release-4.0.1
+# COPY    ./utility/run_job.sh ./
+# COPY    ./utility/cp_runjob.sh ./
+# COPY    ./utility/Fmake_config.sh ./mk/
+# USER    root
+# RUN chmod u+x cp_runjob.sh \
+#     && chown docker-nemo:docker-nemo cp_runjob.sh \
+#     && chown docker-nemo:docker-nemo run_job.sh \
+#     && chown docker-nemo:docker-nemo ./mk/Fmake_config.sh
+
+# JG: ./makenemo -m linux_gfortran -n JG -r GYRE_PISCES => /root/work/nemo/release-4.0.1/cfgs/JG/BLD/bin/nemo.exe
+# mkdir input_nemo output_nemo
+# JG: ./makenemo -m linux_gfortran -r GYRE_BFM -n JG   (needs bfm)
+
+# USER docker-nemo
+# RUN ./cp_runjob.sh
+# RUN rm cp_runjob.sh run_job.sh \
+#     && mkdir input_nemo \
+#     && mkdir output_nemo
+#}}}
+#}}}
+
+#{{{ root@348b296a9263:~/work/nemo/release-4.0.1/cfgs/GYRE_PISCES_CSCS/EXP00# mpirun -np 4 ./nemo
+# ## cd ~/work/nemo/release-4.0.1/cfgs/GYRE_PISCES_CSCS/EXP00/
+# -> report :  Memory report : Context <nemo> : server side : total memory used for buffer 23883 bytes
+# -> -> report :  Memory report : Context <nemo> : server side : total memory used for buffer 19915 bytes
+# -> report :  Memory report : Context <nemo_server> : client side : total memory used for buffer 60054 bytes
+# -> report :  Memory report : Context <nemo> : server side : total memory used for buffer 19915 bytes
+# -> report :  Memory report : Context <nemo_server> : client side : total memory used for buffer 39830 bytes
+# -> report :  Memory report : Context <nemo_server> : client side : total memory used for buffer 47766 bytes
+# report :  Memory report : Context <nemo> : server side : total memory used for buffer 19915 bytes
+# -> report :  Memory report : Context <nemo_server> : client side : total memory used for buffer 39830 bytes
+# -> report :  Memory report : Context <nemo_server> : server side : total memory used for buffer 766126 bytes
+# -> report :  Memory report : Context <nemo_server> : server side : total memory used for buffer 773468 bytes
+# -> report :  Memory report : Context <nemo> : client side : total memory used for buffer 702894 bytes
+# -> report :  Memory report : Context <nemo_server> : server side : total memory used for buffer 639662 bytes
+# -> report :  Memory report : Context <nemo> : client side : total memory used for buffer 706565 bytes
+# -> -> report :  Memory report : Context <nemo> : client side : total memory used for buffer 702894 bytes
+# report :  Memory report : Context <nemo_server> : server side : total memory used for buffer 639662 bytes
+# -> report :  Memory report : Context <nemo> : client side : total memory used for buffer 706565 bytes
+# -> report :  Performance report : Whole time from XIOS init and finalize: 58.3236 s
+# -> report :  Performance report : total time spent for XIOS : 8.64306 s
+# -> report :  Performance report : time spent for waiting free buffer : 0.00262117 s
+# -> report :  Performance report : Ratio : 0.00449419 %
+# -> report :  Performance report : This ratio must be close to zero. Otherwise it may be usefull to increase buffer size or numbers of server
+# -> report :  Memory report : Minimum buffer size required : 23876 bytes
+# -> report :  Memory report : increasing it by a factor will increase performance, depending of the volume of data wrote in file at each time step of the file
+# -> report :  Performance report : Whole time from XIOS init and finalize: 58.3236 s
+# -> report :  Performance report : total time spent for XIOS : 8.83478 s
+# -> report :  Performance report : time spent for waiting free buffer : 0.00255108 s
+# -> report :  Performance report : Ratio : 0.00437401 %
+# -> report :  Performance report : This ratio must be close to zero. Otherwise it may be usefull to increase buffer size or numbers of server
+# -> report :  Memory report : Minimum buffer size required : 23876 bytes
+# -> report :  Memory report : increasing it by a factor will increase performance, depending of the volume of data wrote in file at each time step of the file
+# -> report :  Performance report : Whole time from XIOS init and finalize: 58.3235 s
+# -> report-> report :  Performance report : Whole time from XIOS init and finalize:  : 58.3235 s
+# -> report :  Performance report : total time spent for XIOS : 8.81935 s
+# -> report :  Performance report : time spent for waiting free buffer : 0.00288534 s
+# -> report :  Performance report : Ratio : 0.00494713 %
+# -> report :  Performance report : This ratio must be close to zero. Otherwise it may be usefull to increase buffer size or numbers of server
+# -> report :  Memory report : Minimum buffer size required : 19908 bytes
+# -> report :  Memory report : increasing it by a factor will increase performance, depending of the volume of data wrote in file at each time step of the file
+#  Performance report : total time spent for XIOS : 8.82769 s
+# -> report :  Performance report : time spent for waiting free buffer : 0.00241518 s
+# -> report :  Performance report : Ratio : 0.00414101 %
+# -> report :  Performance report : This ratio must be close to zero. Otherwise it may be usefull to increase buffer size or numbers of server
+# -> report :  Memory report : Minimum buffer size required : 19908 bytes
+# -> report :  Memory report : increasing it by a factor will increase performance, depending of the volume of data wrote in file at each time step of the file
+# Note: The following floating-point exceptions are signalling: IEEE_UNDERFLOW_FLAG IEEE_DENORMAL
+# STOP 0
+#}}}

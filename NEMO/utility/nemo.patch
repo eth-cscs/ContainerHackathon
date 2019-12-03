@@ -1,0 +1,62 @@
+diff -Naur release-4.0.1.ORI/arch/arch-linux_gfortran.fcm release-4.0.1/arch/arch-linux_gfortran.fcm
+--- release-4.0.1.ORI/arch/arch-linux_gfortran.fcm	2019-11-21 14:41:07.000000000 +0100
++++ release-4.0.1/arch/arch-linux_gfortran.fcm	2019-11-21 14:43:31.000000000 +0100
+@@ -30,32 +30,33 @@
+ #  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
+ #  - fcm variables are starting with a % (and not a $)
+ #
+-%NCDF_HOME           /usr/local/netcdf
+-%HDF5_HOME           /usr/local/hdf5
+-%XIOS_HOME           $HOME/xios-2.5
++%NCDF_HOME           /usr
++%HDF5_HOME           /usr
++%XIOS_HOME           /tmp/X/XIOS/branchs/xios-2.5
+ %OASIS_HOME          /not/defined
+ 
+-%NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
++%NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include -I%XIOS_HOME/extern/src_netcdf4
+ %NCDF_LIB            -L%NCDF_HOME/lib -lnetcdff -lnetcdf
++%HDF5_INC            -I%HDF5_HOME/include
++%HDF5_LIB            -L%HDF5_HOME/lib -lhdf5_hl -lhdf5 -lhdf5 -lz
+ %XIOS_INC            -I%XIOS_HOME/inc 
+-%XIOS_LIB            -L%XIOS_HOME/lib -lxios -L/usr/lib/gcc/x86_64-linux-gnu/5 -lstdc++
++%XIOS_LIB            -L%XIOS_HOME/lib -lxios -lstdc++
+ 
+-%OASIS_INC           -I%OASIS_HOME/build/lib/mct -I%OASIS_HOME/build/lib/psmile.MPI1
+-%OASIS_LIB           -L%OASIS_HOME/lib -lpsmile.MPI1 -lmct -lmpeu -lscrip
++#%OASIS_INC           -I%OASIS_HOME/build/lib/mct -I%OASIS_HOME/build/lib/psmile.MPI1
++#%OASIS_LIB           -L%OASIS_HOME/lib -lpsmile.MPI1 -lmct -lmpeu -lscrip
+ 
+ %CPP	             cpp -Dkey_nosignedzero 
+-%FC	             /usr/bin/mpif90 -c -cpp 
+-%FCFLAGS             -fdefault-real-8 -O3 -funroll-all-loops -fcray-pointer -ffree-line-length-none
++%FC	                 /usr/bin/mpif90 -c -cpp 
++%FCFLAGS             -fdefault-real-8 -g -O2 -ffree-line-length-none
+ %FFLAGS              %FCFLAGS
+-#%LD                  /usr/bin/mpif90 -Wl,-rpath=$HOME/INSTALL/lib:/usr/lib
+ %LD                  /usr/bin/mpif90
+ %LDFLAGS             
+ %FPPFLAGS            -P -C -traditional
+ %AR                  ar
+ %ARFLAGS             rs
+ %MK                  make
+-%USER_INC            %XIOS_INC %OASIS_INC %NCDF_INC
+-%USER_LIB            %XIOS_LIB %OASIS_LIB %NCDF_LIB
++%USER_INC            %XIOS_INC %HDF5_INC %NCDF_INC
++%USER_LIB            %XIOS_LIB %HDF5_LIB %NCDF_LIB
+ 
+ %CC                  cc
+ %CFLAGS              -O0
+diff -Naur release-4.0.1.ORI/src/OCE/oce.F90 release-4.0.1/src/OCE/oce.F90
+--- release-4.0.1.ORI/src/OCE/oce.F90	2019-11-21 14:40:01.000000000 +0100
++++ release-4.0.1/src/OCE/oce.F90	2019-11-21 14:39:32.000000000 +0100
+@@ -113,6 +113,9 @@
+       ALLOCATE( ub2_i_b(jpi,jpj), vb2_i_b(jpi,jpj)                                  , STAT=ierr(6) )
+ #endif
+          !
++#if defined key_my_trc
++      ierr(:) = 0     ! cscs
++#endif         
+       oce_alloc = MAXVAL( ierr )
+       IF( oce_alloc /= 0 )   CALL ctl_stop( 'STOP', 'oce_alloc: failed to allocate arrays' )
+       !

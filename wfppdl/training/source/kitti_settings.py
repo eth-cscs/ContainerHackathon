@@ -8,12 +8,12 @@
 #DATA_DIR = '/p/home/jusers/hussmann1/jureca/movingObjects/se_nw'
 #data directory for featuretesting:
 ##DATA_DIR = './testTry2'
-DATA_DIR = '../splits'
+DATA_DIR = '/mnt/splits'
 # Where model weights and config will be saved if you run kitti_train.py
 # If you directly download the trained weights, change to appropriate path.
-WEIGHTS_DIR = './model_data_keras2/'
+WEIGHTS_DIR = '/mnt/model_data_keras2/'
 #WEIGHTS_DIR = '/p/project/cjjsc42/bing/ml-severin/model_data_keras2'
 
 # Where results (prediction plots and evaluation file) will be saved.
-RESULTS_SAVE_DIR = './kitti_results'
+RESULTS_SAVE_DIR = '/mnt/kitti_results'
 

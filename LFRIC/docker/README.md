@@ -182,7 +182,7 @@ Below are times for completing the Gungho benchmark on Cray XC50 node with diffe
 |       1      |  00:06:57  |  00:01:43   |
 |       2      |  00:06:55  |  00:01:40   |
 
-## `LFRic` Gravity Wave benchmark
+## LFRic Gravity Wave benchmark
 
 After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
 ```

@@ -16,3 +16,17 @@ nn_GYRE cores cn    max_rank_time (timing.output)
 80      384    32   144.434
 160    1536   128   152.759
 320
+
+## 50 steps in the middle:
+#nn_GYRE cores  cn                    sec     steps sec/step %mpi
+10        6     1 0006c/timing.output 36.5163 50 0.730326 3.9
+20       24     2 0024c/timing.output 58.5121 50 1.17024 4.4
+40       96     8 0096c/timing.output 58.6638 50 1.17328 6.4
+80      384    32 0384c/timing.output 59.1005 50 1.18201 7.8
+160    1536   128 1536c/timing.output 59.1541 50 1.18308 10
+
+# SARUS: Giorgio Micaletto
+WEAK SCALING
+nn_GYRE = [10,20,40,80,160]
+cn = [6,24,96,384,1536]
+sec = [38.896,58.357,62.745,59.120,60.749]

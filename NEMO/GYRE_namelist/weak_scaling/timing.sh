@@ -1,4 +1,4 @@
-for i in */timing.output; do e $i; grep -m1 -a1 "Elapsed Time" $i ;done
+for i in */timing.output; do echo $i; grep -m1 -a1 "Elapsed Time" $i ;done
 
 # 006c/timing.output
 #  --------------------

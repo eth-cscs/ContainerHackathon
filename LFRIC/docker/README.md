@@ -1,6 +1,6 @@
 # How to build a Docker container of LFRIC
 
-The template Dockerfile to build the LFRIC container is available below
+A template Dockerfile to build the LFRIC container is available below:
 ```
 FROM lfric-deps:gnu
 #
@@ -43,10 +43,11 @@ RUN tar -xf LFRic_trunk.tar \
 
 ENV LFRIC_EXEC_PATH $HOME/LFRic_trunk/gungho/bin
 ``` 
+The template starts the build from `lfric-deps:gnu`, which contains the libraries needed by the code: `mpich`, `YAXT`, `HDF5`, `netCDF`, `netCDF-Fortran`, `netCDF-C++`, `XIOS`. The scripts that build the libraries are provided in the repository.
 
 # How to run the LFRC container with Sarus on Piz Daint
 
-After creating the Docker image of LFRIN Gravity Wave benchmark, you load it with Sarus on Piz Daint:
+After creating the Docker image of the LFRIC Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
 ```
 #!/bin/bash -l
 #SBATCH --job-name=lfric-gwave
@@ -65,7 +66,7 @@ module unload xalt
 srun sarus run --mpi load/library/lfric-gwave:gnu gravity_wave gravity_wave_configuration.nml
 ```
 
-The runtime on a single MPI task is around 5 min:
+The Gravity Wave benchmakr on a single MPI task takes around 5 minutes to complete on a single Cray XC50 node:
 ```
 Batch Job Summary Report for Job "lfric-gwave" (18507334) on daint
 -----------------------------------------------------------------------------------------------------

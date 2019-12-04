@@ -8,7 +8,9 @@ COPY . /src
 #set up the work dirtory
 WORKDIR "/src"
 
-# COMMAND ENTRY BASH
-CMD ["bash"]
+ENV PYTHONPATH=/hickle/lib/python3.6/site-packages:$PYTHONPATH
 
-# run in terminal in source directory: docker build -t wfppdl/parallel_training:v1.0 -f ../docker/Dockerfile_parallel ../docker
+# COMMAND ENTRY BASH
+CMD ["python","kitti_train.py"]
+
+# run in terminal in source directory: docker build -t wfppdl/parallel_training:v1.0 -f ../docker/Dockerfile_parallel .

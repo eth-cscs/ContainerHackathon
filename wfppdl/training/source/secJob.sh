@@ -31,6 +31,7 @@ module load SciPy-Stack/2019a-Python-3.6.8
 module load TensorFlow/1.13.1-GPU-Python-3.6.8
 module load Keras/2.2.4-GPU-Python-3.6.8
 module load h5py
+
 # *** start of job script ***
 # Note: The current working directory at this point is
 # the directory where sbatch was executed.

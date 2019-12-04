@@ -20,7 +20,7 @@ from prednet import PredNet
 from data_utils import SequenceGenerator
 from kitti_settings import *
 import datetime
-import tensorflow as tf
+#import tensorflow as tf
 
 save_model = True  # if weights will be saved
 weights_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_weights.hdf5')  # where weights will be saved
@@ -56,6 +56,7 @@ time_loss_weights[0] = 0
 prednet = PredNet(stack_sizes, R_stack_sizes,
 			  A_filt_sizes, Ahat_filt_sizes, R_filt_sizes,
 			  output_mode='error', return_sequences=True)
+
 inputs = Input(shape=(nt,) + input_shape)
 errors = prednet(inputs)  # errors will be (batch_size, nt, nb_layers)
 errors_by_time = TimeDistributed(Dense(1, trainable=False), weights=[layer_loss_weights, np.zeros(1)], trainable=False)(errors)  # calculate weighted error by layer
@@ -78,6 +79,7 @@ a = datetime.datetime.now()
 #Bing: replace samples_per_epoch/batch_size to 10 for hackthon testing
 history = model.fit_generator(train_generator, 10, nb_epoch, callbacks=callbacks,
                 validation_data=val_generator, validation_steps=N_seq_val/batch_size)
+
 b = datetime.datetime.now()
 
 #the training time

@@ -65,10 +65,11 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load daint-gpu
 module load sarus
 module unload xalt
-srun sarus run --mount=type=bind,source=$PWD,destination=/usr/local/src/LFRic_trunk/miniapps/gravity_wave/example --mpi load/library/lfric-gwave:gnu gravity_wave ./gwave.nml
+srun sarus run --mount=type=bind,source=/scratch/snx3000/lucamar/lfric/gwave/input,destination=/usr/local/src/gwave --mpi load/library/lfric-gwave:gnu gravity_wave ./gravity_wave_configuration.nml
 ```
+The local folder `input` contains the namelist `gravity_wave_configuration.nml` and the mesh file `mesh24.nc`.
 
-The Gravity Wave benchmakr on a single MPI task takes around 5 minutes to complete on a single Cray XC50 node:
+The Gravity Wave benchmark on a single MPI task takes around 5 minutes to complete on a single Cray XC50 node:
 ```
 Batch Job Summary Report for Job "lfric-gwave" (18507334) on daint
 -----------------------------------------------------------------------------------------------------

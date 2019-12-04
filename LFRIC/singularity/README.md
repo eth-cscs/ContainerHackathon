@@ -1,7 +1,7 @@
 # How to build a Singularity container of LFRIC
 
 This is built on previous work using Singularity to create an LFRic build system.
-LFRic has a large dependency tree and is currently being developed by anumber of users on a variety of systems, from laptops to HPCs.
+LFRic has a large dependency tree and is currently being developed by a number of users on a variety of systems, from laptops to HPCs.
 It is fully described at  https://github.com/NCAS-CMS/LFRic_container
 
 The aim of this project is to:

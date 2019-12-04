@@ -1,0 +1,112 @@
+# Platform dependent configuration functions for MareNostrum
+#(mnX.bsc.es)
+
+function configure()
+{
+    # This function should configure all settings/modules needed to
+    # later prepare the EC-Earth run directory and set variables used
+    # in the run script
+
+    # SCRATCH is not defined in MN3, define it here
+    # and also make sure it is defined when compiling
+    export SCRATCH=/home/ecearth
+
+    # Configure paths for building/running EC-Earth
+    ecearth_src_dir=[[[PLT:ACTIVE:ECEARTH_SRC_DIR]]]
+    run_dir=[[[PLT:ACTIVE:RUN_DIR]]]
+    ini_data_dir=[[[PLT:ACTIVE:INI_DATA_DIR]]]
+
+    # File for standard output.
+    # NOTE: This will be modified for restart jobs!
+    stdout_file=${start_dir}/out/$(basename ${SLURM_JOB_NAME}).out
+
+    # Resubmit this job for automatic restarts? [true/false]
+    # Also, add options for the resubmit command here.
+    resubmit_job=[[[PLT:ACTIVE:RESUBMIT_JOB]]]
+    resubmit_opt="[[[PLT:ACTIVE:RESUBMIT_OPT]]]"
+
+    # Configure grib api paths
+    export GRIB_DEFINITION_PATH=[[[PLT:ACTIVE:ECEARTH_SRC_DIR]]]/util/grib_table_126:[[[PLT:ACTIVE:GRIBAPI_BASE_DIR]]]/[[[PLT:ACTIVE:GRIBAPI_DEFINITION_SUBDIR]]]
+    export GRIB_SAMPLES_PATH=[[[PLT:ACTIVE:GRIBAPI_BASE_DIR]]]/[[[PLT:ACTIVE:GRIBAPI_SAMPLES_SUBDIR]]]
+    export GRIB_BIN_PATH=[[[PLT:ACTIVE:GRIBAPI_BASE_DIR]]]/[[[PLT:ACTIVE:GRIBAPI_BIN_SUBDIR]]]
+
+
+    # Configure number of processors per node
+    proc_per_node=[[[PLT:ACTIVE:PROC_PER_NODE]]]
+
+    # Configure and load modules
+    pre_load_modules_cmd="[[[PLT:ACTIVE:PRE_LOAD_MODULES_CMD]]]"
+    module_list="[[[PLT:ACTIVE:MODULE_LIST]]]"
+
+    if [ -n "${module_list}" ]
+    then
+        set +eu
+        if [ -n "${pre_load_modules_cmd}" ]
+        then
+            ${pre_load_modules_cmd}
+        fi
+        for m in "${module_list}"
+        do
+            module add $m
+        done
+        set -eu
+    fi
+
+    # Add directories to the shared library search path
+    if [ -n "[[[PLT:ACTIVE:ADD_TO_LD_LIBRARY_PATH]]]" ]
+    then
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"[[[PLT:ACTIVE:ADD_TO_LD_LIBRARY_PATH]]]"
+    fi
+
+    ulimit -s unlimited
+}
+
+function launch()
+{
+    cmd="srun -N16 -n16 -C gpu sarus run --mpi <repo name>/<image name>:<image tag>"
+
+    while (( "$#" ))
+    do
+        # Get number of MPI ranks and executable name
+        nranks=$1
+        executable=./$(basename $2)
+        shift
+        shift
+
+        cmd+=" -np $nranks $executable"
+
+        # Add any arguments to executable
+        while (( "$#" )) && [ "$1" != "--" ]
+        do
+            cmd+=" $1"
+            shift
+        done
+        shift || true
+
+        # Add colon of more executables follow
+        (( "$#" )) && cmd+=" :"
+    done
+
+    echo SLURM_JOB_ID: $SLURM_JOB_ID
+    echo "$cmd"
+}
+
+function finalise()
+{
+    # This function should execute of any post run functionality, e.g.
+    # platform dependent cleaning or a resubmit
+
+    if ${resubmit_job} && [ $(date -d "${leg_end_date}" +%s) -lt $(date -d "${run_end_date}" +%s) ]
+    then
+        info "Resubmitting job for leg $((leg_number+1))"
+        # Need to go to start_dir to find the run script
+        cd ${start_dir}
+        # Submit command
+        # Note: This does not work if you explicitely specify a job name!
+#        bsub -n ${SLURM_JOB_NUM_NODES} \
+#             -w ${SLURM_JOB_ID} \
+#             -oo ${run_dir}/$(basename ${stdout_file}).$(printf %03d $((leg_number+1)))  \
+#             ${resubmit_opt} \
+#             ${SLURM_JOB_NAME}
+    fi
+}

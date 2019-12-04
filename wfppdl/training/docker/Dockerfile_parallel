@@ -10,4 +10,4 @@ WORKDIR "/src"
 # COMMAND ENTRY BASH
 CMD ["bash"]
 
-#run in terminal: docker build -t wfppdl/parallel_training:v1.0 -f Dockerfile_parallel .
+# run in terminal in source directory: docker build -t wfppdl/parallel_training:v1.0 -f ../docker/Dockerfile_parallel ../docker

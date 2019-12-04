@@ -55,7 +55,7 @@ make build #Build the main exec.
 ```
 Log out of the container. The executable built inside the container can be run outside the container using the standard slurm submission system.
 
-### Submission.
+### Submission
 
 The following submission script will set up the Intel compiler version used to build the executable, and ensure that the Cray MPICH-ABI libraries are used at run time.
 ```

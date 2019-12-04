@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
 	libnetcdf-dev libnetcdff-dev libhdf5-dev \
         libeccodes-dev libeccodes-data libeccodes-tools \
         libopenblas-base libopenblas-dev \
-	vim\
+	vim \
+	python \
         --no-install-recommends     \
     && rm -rf /var/lib/apt/lists/*
 
@@ -35,16 +36,20 @@ WORKDIR /home/ecearth
 
 # Source code
 ADD ec-earth.tar /home/ecearth
-
+ 
 # GRIBEX LIB
 ADD gribex_000370.tar.gz /home/ecearth
 
-#RUN cd gribex_000370/  \
-#&& ./build_library \
-#&& cd examples/ \
-#&& make \
-#&& ln -s ../data/ . \
-#&& ./test.sh 
+# RUN cd gribex_000370/  \
+# && ./build_library \
+# && ./install \
+
+# RUN cd /home/ecearth/ec-earth/sources  \
+#	&& ./compilation.sh
+
+
+
+
 
 
 

@@ -9,7 +9,7 @@ COPY . /src
 WORKDIR "/src"
 
 ENV PYTHONPATH=/src/hickle/lib/python3.6/site-packages:$PYTHONPATH
-ENV export HDF5_USE_FILE_LOCKING=FALSE
+ENV HDF5_USE_FILE_LOCKING=FALSE
 
 # COMMAND ENTRY BASH
 CMD ["python","kitti_train.py"]

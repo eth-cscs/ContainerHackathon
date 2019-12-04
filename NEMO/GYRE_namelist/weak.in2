@@ -1,0 +1,18 @@
+# nnGYRE*2 => c*4:
+# GYRE  nn_itend nn_stock  nn_GYRE  ln_bench jpnj jpni ln_timing cores cn
+        100      4320      10       T        3    2    T         6     1
+        100      4320      20       T        6    4    T         24    2
+        100      4320      40       T       12    8    T         96    8
+        100      4320      80       T       24   16    T        384    32
+        100      4320     160       T       48   32    T       1536   128
+        -----------------------------------------------------------------
+        100      4320     320       T       96   64    T       6144   512
+
+# NATIVE (no container)
+nn_GYRE cores cn    max_rank_time (timing.output)
+10        6     1    94.878
+20       24     2   140.223
+40       96     8   142.302
+80      384    32   144.434
+160    1536   128   152.759
+320

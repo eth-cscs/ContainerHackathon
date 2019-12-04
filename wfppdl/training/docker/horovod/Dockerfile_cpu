@@ -3,10 +3,10 @@ FROM ubuntu:${UBUNTU_VERSION}
 
 # Arguments for the build. UBUNTU_VERSION needs to be repeated because
 # the first usage only applies to the FROM tag.
-ARG UBUNTU_VERSION=18.04
+ARG UBUNTU_VERSION=16.04
 ARG MPI_KIND=OpenMPI
 ARG PYTHON_VERSION=3.6
-ARG TENSORFLOW_PACKAGE=tensorflow==1.14.0
+ARG TENSORFLOW_PACKAGE=tensorflow==1.13.1
 ARG KERAS_PACKAGE=keras==2.2.4
 ARG PYTORCH_PACKAGE=torch==1.2.0+cpu
 ARG TORCHVISION_PACKAGE=torchvision==0.4.0+cpu

@@ -1,10 +1,13 @@
-FROM jfloff/alpine-python:3.6-slim
+#base image
+FROM horovod/horovod:0.16.2-tf1.12.0-torch1.1.0-mxnet1.4.1-py3.5
 
-RUN python -m pip install numpy tensorflow keras datetime
+#copy the source file
+COPY . /src
 
-COPY . /root/soure
+#set up the work dirtory
+WORKDIR "/src"
 
-WORKDIR /root
+# COMMAND ENTRY BASH
+CMD ["bash"]
 
-CMD python 
-
+# run in terminal in source directory: docker build -t wfppdl/training:v1.0 -f ../docker/Dockerfile ../docker

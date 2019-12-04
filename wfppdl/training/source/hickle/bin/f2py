@@ -1,0 +1,4 @@
+#!/usr/local/software/jureca/Stages/2018b/software/Python/3.6.6-GCCcore-7.3.0/bin/python
+# EASY-INSTALL-SCRIPT: 'numpy==1.15.2','f2py'
+__requires__ = 'numpy==1.15.2'
+__import__('pkg_resources').run_script('numpy==1.15.2', 'f2py')

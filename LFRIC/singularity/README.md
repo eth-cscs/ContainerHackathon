@@ -10,8 +10,7 @@ The aim of this project is to:
 
 2) Produce an executable that is able to make use of local MPI libraries and therefore local fast interconnects.
 
-3) Produce an executable that be run on the native system with no run-time dependencies on the build environment to minimise the conflict between the packaged libraries and local libraries used for MPI and job control.
-
+3) Produce an executable that can be run on the native system with no run-time dependencies on the build environment to minimise the conflict between the packaged libraries and local libraries used for MPI and job control.
 
 
 It is dependent on Intel Fortran and an MPICH-ABI compliant MPI implementation. 

@@ -65,7 +65,9 @@ export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load daint-gpu
 module load sarus
 module unload xalt
-srun sarus run --mount=type=bind,source=/scratch/snx3000/lucamar/lfric/gwave/input,destination=/usr/local/src/gwave --mpi load/library/lfric-gwave:gnu gravity_wave ./gravity_wave_configuration.nml
+srun sarus run \ 
+     --mount=type=bind,source=/scratch/snx3000/lucamar/lfric/gwave/input,destination=/usr/local/src/gwave \ 
+     --mpi load/library/lfric-gwave:gnu gravity_wave ./gravity_wave_configuration.nml
 ```
 The local folder `input` contains the namelist `gravity_wave_configuration.nml` and the mesh file `mesh24.nc`: both files are available in the [Gravity Wave input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gwave.tar.gz) on this repository.
 

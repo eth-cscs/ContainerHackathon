@@ -21,7 +21,7 @@ Build the Singularity LFRic build system as described in step 1-4 in https://git
 
 ### On Piz Daint:
 ```
-unset LD_PRELOAD # There is a general LD_PRELOAD with interferes with Singularity, but isn't required for it.
+unset LD_PRELOAD # There is a general LD_PRELOAD which interferes with Singularity, but isn't required for it.
 module swap PrgEnv-cray PrgEnv-intel
 module load singularity
 svn checkout --username <username> https://code.metoffice.gov.uk/svn/lfric/LFRic/trunk

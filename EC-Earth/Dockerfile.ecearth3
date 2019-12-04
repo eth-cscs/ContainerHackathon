@@ -39,13 +39,15 @@ ADD ec-earth.tar /home/ecearth
  
 # GRIBEX LIB
 ADD gribex_000370.tar.gz /home/ecearth
+RUN mkdir /home/ecearth/inidata/
+RUN mkdir /home/ecearth/EXP/
 
-# RUN cd gribex_000370/  \
-# && ./build_library \
-# && ./install \
+RUN cd gribex_000370/  \
+&& ./build_library \
+&& ./install 
 
-# RUN cd /home/ecearth/ec-earth/sources  \
-#	&& ./compilation.sh
+RUN cd /home/ecearth/ec-earth/sources  \
+&& ./compilation.sh
 
 
 

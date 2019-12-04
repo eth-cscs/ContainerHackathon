@@ -1,6 +1,6 @@
 # How to build a Docker container of LFRIC
 
-A template Dockerfile to build the LFRIC container is available below:
+A template Dockerfile to build the `LFRIC` container is available below:
 ```
 FROM lfric-deps:gnu
 #
@@ -43,11 +43,13 @@ RUN tar -xf LFRic_trunk.tar \
 
 ENV LFRIC_EXEC_PATH $HOME/LFRic_trunk/gungho/bin
 ``` 
-The template starts the build from `lfric-deps:gnu`, which contains the libraries needed by the code: `mpich`, `YAXT`, `HDF5`, `netCDF`, `netCDF-Fortran`, `netCDF-C++`, `XIOS`. The scripts that build the libraries are provided in the repository.
+The template starts the build from `lfric-deps:gnu`, which contains the libraries needed by the code: `mpich`, `YAXT`, `HDF5`, `netCDF`, `netCDF-Fortran`, `netCDF-C++`, `XIOS` and `PFUNIT`. The scripts that build the libraries are provided in the repository: 
+- [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh) setup the environment and build the dependencies of `LFRIC`
+- [make_arch_files.sh] (https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/make_arch_files.sh) creates the architecture files needed to build `XIOS`
 
 # How to run the LFRC container with Sarus on Piz Daint
 
-After creating the Docker image of the LFRIC Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
+After creating the Docker image of the `LFRIC` Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
 ```
 #!/bin/bash -l
 #SBATCH --job-name=lfric-gwave

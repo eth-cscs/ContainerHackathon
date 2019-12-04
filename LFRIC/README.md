@@ -19,4 +19,4 @@ The term used to describe the next generation of supercomputer is “exascale”
 
 Although the dynamical core is perhaps the part of the system most impacted by the challenges of exascale computers, it is by no means the only one. Others range from the data assimilation system that processes observations, through the ocean and chemistry models, to the systems that process the forecast data to create meaningful products for our customers. The Met Office is therefore spinning up the Exascale Programme to consider all aspects of the end-to-end weather and climate prediction system. The programme will coordinate this exciting, challenging, and extensive work, targeting the supercomputers that are envisaged becoming operational in the middle of the next decade.
 
-See more on https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric
+Read more on https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric

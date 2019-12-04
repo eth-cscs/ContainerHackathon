@@ -113,31 +113,31 @@ The scripts that build the libraries are provided in the repository:
 
 * [Sarus](https://user.cscs.ch/tools/containers/sarus) on Piz Daint had issues with locating `MPICH`. Hence, the lines in the first
   Dockerfile above
-```
+  ```
   # Adds config file for MPICH for Sarus on Piz Daint
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
-```
-  were aded to help locate MPICH libraries (see e.g. [this link](https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path). 
+  ```
+  were aded to help locate MPICH libraries (see e.g. [this link])(https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path). 
   Note, this would normally be achieved by building Docker container with the option
   `--add-hostname $HOSTNAME:127.0.0.1` to `docker build` command. Alternatively it could be done by modifying the `/etc/hosts` file
   in the Docker container as described [here](https://stackoverflow.com/questions/23112515/mpich2-gethostbyname-failed/23118973)
-  and the committing the change. However, both these solutions did not work.
+  and the committing the change. However, neither of these solutions worked here.
 
 * Checking out the `LFRic` trunk requires access to the MO [`LFRic` repository](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic).
 
-* Once the `LFRic` trunk is checked out, the `Makefile`s of  tested `gungho` and `gravity_wave` applications neede to be modified from
-```
+* Once the `LFRic` trunk is checked out, the `Makefile`s of  tested Gungho and Gravity Wave applications needed to be modified from
+  ```
   export EXTERNAL_DYNAMIC_LIBRARIES = yaxt yaxt_c netcdff netcdf hdf5 \
                                       $(CXX_RUNTIME_LIBRARY)
   export EXTERNAL_STATIC_LIBRARIES = xios
-```
+  ```
   to
-```
+  ```
   export EXTERNAL_DYNAMIC_LIBRARIES =
   export EXTERNAL_STATIC_LIBRARIES = yaxt yaxt_c xios netcdff netcdf hdf5_hl \
                                      hdf5 z :libstdc++.a
-```
+  ```
   for the build to complete. For this reason we made changes to `Makefile`s outside the container and then copied the tarballs into the container.
 
 * By default, running command-line `make` builds `LFRic` with MPI but not OpenMP. To enable `PSyclone` OpenMP optimisations, the environment variable
@@ -179,12 +179,12 @@ Below are times for completing the Gungho benchmark on Cray XC50 node with diffe
 
 | OMP threads  | 1 MPI task | 6 MPI tasks |
 | -------------| -----------| ------------|
-|       1      |  00:06:57  |  00:06:55   |
-|       2      |  00:01:43  |  00:01:40   |
+|       1      |  00:06:57  |  00:01:43   |
+|       2      |  00:06:55  |  00:01:40   |
 
 ## `LFRic` Gravity Wave benchmark
 
-After creating the Docker image of the `LFRIC` Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
+After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:
 ```
 #!/bin/bash -l
 #SBATCH --job-name=lfric-gwave

@@ -26,21 +26,6 @@ my_rank = comm.Get_rank()  # rank of the node
 p = comm.Get_size()  # number of assigned nods
 
 
-# ==================================== Master Logging ==================================================== #
-# DEBUG: Detailed information, typically of interest only when diagnosing problems.
-# INFO: Confirmation that things are working as expected.
-# WARNING: An indication that something unexpected happened, or indicative of some problem in the near
-# ERROR: Due to a more serious problem, the software has not been able to perform some function.
-# CRITICAL: A serious error, indicating that the program itself may be unable to continue running.
-
-if my_rank == 0:  # node is master
-    logging.basicConfig(filename='stager.log', level=logging.DEBUG,
-                        format='%(asctime)s:%(levelname)s:%(message)s')
-    start = time.time()  # start of the MPI
-    logging.info(' === PyStager is started === ')
-    print(' === PyStager is started === ')
-
-
 # ================================== ALL Nodes:  Read-in parameters ====================================== #
 
 fileName = "parameters.dat"  # input parameters file
@@ -61,27 +46,40 @@ rsync_status = int(params["Rsync_Status"])
 checksum_status = int(params["Checksum_Status"])
 load_level = int(params["Load_Level"])
 
+# ==================================== Master Logging ==================================================== #
+# DEBUG: Detailed information, typically of interest only when diagnosing problems.
+# INFO: Confirmation that things are working as expected.
+# WARNING: An indication that something unexpected happened, or indicative of some problem in the near
+# ERROR: Due to a more serious problem, the software has not been able to perform some function.
+# CRITICAL: A serious error, indicating that the program itself may be unable to continue running.
+
+if my_rank == 0:  # node is master
+    logging.basicConfig(filename='pystager.log', level=logging.DEBUG,
+                        format='%(asctime)s:%(levelname)s:%(message)s')
+    logger = logging.getLogger(__file__)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
+
+    start = time.time()  # start of the MPI
+    logger.info(' === PyStager is started === ')
+
+
 # check the existence of the  source path :
 
 if not os.path.exists(source_dir):  # check if the source dir. is existing
     if my_rank == 0:
-        logging.critical('The source does not exist')
-        logging.info('exit status : 1')
-        print('Critical : The source does not exist')
+        logger.critical('The source does not exist')
+        logger.info('exit status : 1')
 
     ## TODO : comminication to exit for all Nodes or self-termination termination 
 
-
-
     sys.exit(1)
-
 
 
 if my_rank == 0:  # node is master
 
     # ==================================== Master : Directory scanner ================================= #
 
-    logging.info("==== Directory scanner : start ====")
+    logger.info("==== Directory scanner : start ====")
     ret_dir_scanner = directory_scanner(source_dir,load_level)
     #print(ret_dir_scanner)
 
@@ -97,26 +95,26 @@ if my_rank == 0:  # node is master
     total_size_source = ret_dir_scanner[2]
     total_num_files = ret_dir_scanner[3]
     total_num_dir = ret_dir_scanner[4]
-    logging.info("==== Directory scanner : end ====")
+    logger.info("==== Directory scanner : end ====")
 
     # ================================= Master : Data Structure Builder ========================= #
 
-    logging.info("==== Data Structure Builder : start  ====")     
+    logger.info("==== Data Structure Builder : start  ====")     
     data_structure_builder(source_dir, destination_dir, dir_detail_list, list_items_to_process,load_level)
-    logging.info("==== Data Structure Builder : end  ====") 
+    logger.info("==== Data Structure Builder : end  ====") 
 
     # ===================================  Master : Load Distribution   ========================== #
 
-    logging.info("==== Load Distribution  : start  ====")  
+    logger.info("==== Load Distribution  : start  ====")  
     #def load_distributor(dir_detail_list, sub_dir_list, total_size_source, total_num_files, total_num_directories, p):
     ret_load_balancer = load_distributor(dir_detail_list, list_items_to_process, total_size_source, total_num_files, total_num_dir,load_level, p)
     transfer_dict = ret_load_balancer
-    logging.info(ret_load_balancer) 
-    logging.info("==== Load Distribution  : end  ====") 
+    logger.info(ret_load_balancer) 
+    logger.info("==== Load Distribution  : end  ====") 
 
     # ===================================== Master : Send / Receive =============================== #
 
-    logging.info("==== Master Communication  : start  ====") 
+    logger.info("==== Master Communication  : start  ====") 
 
     # Send : the list of the directories to the nodes
     for nodes in range(1, p):
@@ -127,7 +125,7 @@ if my_rank == 0:  # node is master
     idle_counter = p - len(list_items_to_process)
     while idle_counter > 1:  # non-blocking receive function
         message_in = comm.recv()
-        logging.warning(message_in)
+        logger.warning(message_in)
         #print('Warning:', message_in)
         idle_counter = idle_counter - 1
     
@@ -135,15 +133,14 @@ if my_rank == 0:  # node is master
     message_counter = 1
     while message_counter <= len(list_items_to_process):  # non-blocking receive function
         message_in = comm.recv()
-        logging.info(message_in)
+        logger.info(message_in)
         message_counter = message_counter + 1
 
     # stamp the end of the runtime
     end = time.time()
-    logging.debug(end - start)
-    logging.info('==== PyStager is done ====')
-    logging.info('exit status : 0')
-    print('=== PyStager is finished ===')
+    logger.debug(end - start)
+    logger.info('==== PyStager is done ====')
+    logger.info('exit status : 0')
   
 
     sys.exit(0)
@@ -222,10 +219,6 @@ else:  # node is slave
                     #        print(msg_out)
                 else :
                     rsync_str = (" Opereation requested on the " + source_dir + job )
-
-
-
-
 
 
 

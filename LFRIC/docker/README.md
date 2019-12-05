@@ -120,7 +120,7 @@ We have saved the template Dockerfile above as `lfric-gnu.docker` and we built i
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
   ```
-  Please look [here])(https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path) here for more information.
+  Please look [here](https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path) here for more information.
 
 * Some libraries (e.g. `YAXT`) perform a test run of a minimal MPI code during the configure step of the installation procedure: the test might fail within the Docker container if the local hostname cannot be resolved correctly. In order to do that, the local hostname should be available in the file `/etc/hosts`, which can be achieved adding the option `--add-hostname $HOSTNAME:127.0.0.1` to Docker build command.
   If this solution does not work, one needs to edit the `/etc/hosts` file of the Docker container directly using `docker run` and commit the change with `docker commit`, since editing the `/etc/hosts` file is not possible within the Dockerfile.

@@ -91,7 +91,8 @@ RUN chmod 755 install_lfric_env.sh install_xios_env.sh \
 The scripts that build the libraries are provided in the repository: 
 - [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh) sets up the environment and builds the dependencies of `LFRic` without the `XIOS`;
 - [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh) creates architecture files needed to build `XIOS` and builds `XIOS`.
-We have save the template Dockerfile above as `lfric-gnu.docker` and we built it with the command below:
+
+We have saved the template Dockerfile above as `lfric-gnu.docker` and we built it with the command below:
 ## Library versions and settings
 
 * All libraries were dynamically linked to make sure that the `LFRic` container will use the optimized libraries of the host system: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.
@@ -111,18 +112,18 @@ We have save the template Dockerfile above as `lfric-gnu.docker` and we built it
 
 ## Tips & tricks
 
-* [Sarus](https://user.cscs.ch/tools/containers/sarus) on Piz Daint had issues with locating `MPICH`. Hence, the lines in the first
-  Dockerfile above
+* The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus)  supported on Piz Daint can add the proper hook to the host MPI library if the command `ldconfig` has been run to configure dynamic linker run-time bindings . Since we have installed the `MPICH` library in a non-default location, the command `ldconfig` would not be able to find the library in the custom path within the container. Therefore, before running `ldconfig` we added the path of `MPICH` to `/etc/ld.so.conf.d/mpich.conf` as in the example below:  
+  
   ```
   # Adds config file for MPICH for Sarus on Piz Daint
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
   ```
-  were aded to help locate MPICH libraries (see e.g. [this link])(https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path). 
-  Note, this would normally be achieved by building Docker container with the option
-  `--add-hostname $HOSTNAME:127.0.0.1` to `docker build` command. Alternatively it could be done by modifying the `/etc/hosts` file
-  in the Docker container as described [here](https://stackoverflow.com/questions/23112515/mpich2-gethostbyname-failed/23118973)
-  and the committing the change. However, neither of these solutions worked here.
+  Please look [here])(https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path) here for more information.
+
+* Some libraries (e.g. `YAXT`) perform a test run of a minimal MPI code during the configure step of the installation procedure: the test might fail within the Docker container if the local hostname cannot be resolved correctly. In order to do that, the local hostname should be available in the file `/etc/hosts`, which can be achieved adding the option `--add-hostname $HOSTNAME:127.0.0.1` to Docker build command.
+  If this solution does not work, one needs to edit the `/etc/hosts` file of the Docker container directly using `docker run` and commit the change with `docker commit`, since editing the `/etc/hosts` file is not possible within the Dockerfile.
+For more details, please check [this link](https://stackoverflow.com/questions/23112515/mpich2-gethostbyname-failed/23118973).
 
 * Checking out the `LFRic` trunk requires access to the MO [`LFRic` repository](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic).
 

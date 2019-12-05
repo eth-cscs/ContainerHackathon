@@ -94,7 +94,7 @@ The scripts that build the libraries are provided in the repository:
 
 ## Library versions and settings
 
-* All libraries were dynamically linked to make sure that the `LFric` container will use the optimized libraries of the host: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.
+* All libraries were dynamically linked to make sure that the `LFRic` container will use the optimized libraries of the host: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.
 
 * The `MPICH` version used in the current Met Office (MO) `LFRic` build system is 3.3. Here we used 3.1.4 for compatibility with Piz Daint libraries.
 

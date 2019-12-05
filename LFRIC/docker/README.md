@@ -122,7 +122,7 @@ The scripts that build the libraries are provided in the repository:
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
   ```
-  Please look [here](https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path)] for more information.
+  Please look [here](https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path) here for more information.
 
 * Some libraries (e.g. `YAXT`) perform a test run of a minimal MPI code during the configure step of the installation procedure: the test might fail within the Docker container if the local hostname cannot be resolved correctly. In order to do that, the local hostname should be available in the file `/etc/hosts`, which can be achieved adding the option `--add-hostname $HOSTNAME:127.0.0.1` to Docker build command.
   If this solution does not work, one needs to edit the `/etc/hosts` file of the Docker container directly using `docker run` and commit the change with `docker commit`, since editing the `/etc/hosts` file is not possible within the Dockerfile.
@@ -175,13 +175,22 @@ The local folder `input/gungho` contains the namelist `gungho_configuration.nml`
 There is also an `iodef.xml` file required for parallel IO, however it is not used if the `use_xios_io` flag in the namelist is set to `.false.` as is the case here. 
 All files are available in the [Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz) on this repository.
 
-Below are times for completing the Gungho benchmark on Cray XC50 with different mesh resolutions, number of nodes, MPI tasks and OpenMP threads. `C24` and `C48` mesh configurations were run on 1 compute node (1 and 6 MPI tasks per node, respectively). `C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks per node).
+Below are times for completing the Gungho benchmark on Cray XC50 with different mesh resolutions, number of nodes, MPI tasks and OpenMP threads. *Note:* These times ar Slurm completion times so they include overheads of job submission (prologue and epilogue).
+
+`C24` and `C48` mesh configurations were run on 1 compute node (1 and 6 MPI tasks per node, respectively).
 
 | OMP threads  | C24, 1 MPI | C24, 6 MPI  | C48, 1 MPI | C48, 6 MPI  |
 | -------------| -----------| ------------| -----------| ------------|
 |       1      |  00:08:06  |  00:01:56   |  00:22:51  |  00:05:00   |
 |       2      |  00:03:24  |  00:00:57   |  00:13:18  |  00:03:26   |
 
+`C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks per node).
+
+| OMP threads  | C96, 6 MPI | C192, 6 MPI  |
+| -------------| -----------| -------------|
+|       1      |  00:03:33  |  00:13:40    |
+|       2      |  00:02:57  |  00:08:57    |
+ 
 ## LFRic Gravity Wave benchmark
 
 After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a template for running the Gravity Wave benchmark:

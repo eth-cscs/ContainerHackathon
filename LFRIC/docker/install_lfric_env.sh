@@ -1,34 +1,18 @@
 #!/bin/bash
 ################################################################################
-# LFRic environment: Install general prerequisites and tools
-################################################################################ 
-#
-# Update
-##sudo apt-get update
-# Make and config tools
-##sudo apt-get install -y make cmake automake libtool-bin pkg-config
-# Install g++ if it is not present on the system (an existing g++ is required
-# for boostrapping a GCC compiler source) - it will install the default 7.4.0
-##sudo apt-get install -y g++ gcc gfortran
-# Text editors, building documentation and source control
-##sudo apt-get install -y doxygen git subversion
-# Building HDF5 (m4, zlibg1*), NetCDF (curl) and XIOS (libcurl4*)
-##sudo apt-get install -y m4 zlib1g-dev curl libcurl4 libcurl4-openssl-dev
-#
+# General prerequisites such as compilers and Python are installed in
+# lfric_deps.docker
 ################################################################################
-# LFRic environment: Install Python2 and PSyclone
+# LFRic environment: Install PSyclone and its prerequisites
 ################################################################################ 
 #
 # Ubuntu 18.04 comes with Python3 but no Python 2 installation. The LFRic trunk
 # is still using Python2 so a version of Python 2 is installed to support
 # dependency analyser and PSyclone
-PYTHON_VERSION=2.7
 PSYCLONE_VERSION=1.7.0
-# Install Python 2.7
-###sudo apt-get install -y python python-pip
 # Install Jinja2 (any version is fine), PSyclone requirements and PSyclone
 # currently used by the LFRic trunk (any missing prerequisites will be installed as well)
-pip install Jinja2 pyparsing six configparser PSyclone==$PSYCLONE_VERSION
+pip install Jinja2 pyparsing six configparser psyclone==$PSYCLONE_VERSION
 #
 ################################################################################
 # LFRic environment: Set installation and build directories with system
@@ -71,7 +55,8 @@ cd $PACKAGE_DIR
 # Configure and install
 ###FC=gfortran CC=gcc $BUILD_DIR/$PACKAGE_NAME/configure --prefix=$INSTALL_DIR --enable-fortran=all --enable-cxx --enable-threads=multiple --disable-shared --enable-romio
 FC=gfortran CC=gcc $BUILD_DIR/$PACKAGE_NAME/configure --prefix=$INSTALL_DIR --enable-fortran=all --enable-cxx --enable-threads=multiple --enable-shared --enable-romio
-make -j $NCORES
+###make -j $NCORES
+make
 ###make check
 make install
 #
@@ -98,7 +83,7 @@ $BUILD_DIR/$PACKAGE_NAME/configure --prefix=$INSTALL_DIR --with-idxtype=long CC=
 make -j $NCORES
 # Tests pass when ran from build directory, however they trip up from the installation directory,
 # hence disabling them
-##make check
+###make check
 make install
 #
 ################################################################################
@@ -207,39 +192,6 @@ CC=mpicc CXX=mpicxx FF=mpif90 FC=mpif90 $BUILD_DIR/$PACKAGE_NAME/configure --pre
 make -j $NCORES
 ###make check
 make install
-#
-################################################################################
-# LFRic environment: Build XIOS revision 1700. The recent XIOS trunk from 
-# revision 1704 fails with segmentation fault due to changes in function
-# void CSourceFilter::buildGraph(CDataPacketPtr packet) in
-# src/filter/source_filter.cpp.
-# Prerequisites: MPICH (version 3.1.4), HDF5 (version 1.8.16) and
-#                NETCDF (version 4.3.3.1)
-################################################################################ 
-#
-# Set XIOS revision
-XIOS_VERSION=1700
-# XIOS requies perl (should come with Ubuntu 18.04)
-# Set paths to HDF5 and NetCDF
-export HDF5_DIR=$INSTALL_DIR
-export NETCDF_DIR=$INSTALL_DIR
-# Set architecture
-SYSTEM_NAME="GCC_LINUX"
-# Record current directory to make configuration scripts
-SCRIPT_DIR=$PWD
-# Generate XIOS configuration files for GCC_LINUX
-./make_arch_files.sh $SYSTEM_NAME
-# Download XIOS source 
-cd $BUILD_DIR
-svn co --revision=$XIOS_VERSION http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk XIOS
-# Configure and build (parallel build on Linux with GCC)
-cd XIOS
-# Copy configuration files for GCC_LINUX
-cp $SCRIPT_DIR/arch-$SYSTEM_NAME.env arch/arch-$SYSTEM_NAME.env
-cp $SCRIPT_DIR/arch-$SYSTEM_NAME.fcm arch/arch-$SYSTEM_NAME.fcm
-cp $SCRIPT_DIR/arch-$SYSTEM_NAME.path arch/arch-$SYSTEM_NAME.path
-# Make
-./make_xios --full --arch $SYSTEM_NAME --job $NCORES
 #
 ################################################################################
 # LFRic environment: Build PFUNIT (version 3.2.9)

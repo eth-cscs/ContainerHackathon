@@ -1,0 +1,3 @@
+FROM		asccmcc/nemo:gyre
+WORKDIR		/root/work/nemo/release-4.0.1
+RUN		./makenemo -m linux_gfortran -n ORCA_ICE_PIS -r ORCA2_ICE_PISCES

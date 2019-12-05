@@ -91,7 +91,7 @@ RUN chmod 755 install_lfric_env.sh install_xios_env.sh \
 The scripts that build the libraries are provided in the repository: 
 - [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh) sets up the environment and builds the dependencies of `LFRic` without the `XIOS`;
 - [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh) creates architecture files needed to build `XIOS` and builds `XIOS`.
-
+We have save the template Dockerfile above as `lfric-gnu.docker` and we built it with the command below:
 ## Library versions and settings
 
 * All libraries were dynamically linked to make sure that the `LFRic` container will use the optimized libraries of the host system: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.

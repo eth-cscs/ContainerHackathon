@@ -190,6 +190,13 @@ Below are times for completing the Gungho benchmark on Cray XC50 with different 
 | -------------| -----------| -------------|
 |       1      |  00:03:33  |  00:13:40    |
 |       2      |  00:02:57  |  00:08:57    |
+
+`C24` mesh configuration ran on 1 MPI task and on 1, 2 and 4 OpenMP threads:
+| OMP threads  | `LFRic` time| Slurm time |
+| -------------| ------------|------------|
+|       1      |  394.76 s   | 00:06:58   |
+|       2      |  231.69 s   | 00:04:32   |
+|       4      |  153.93 s   | 00:03:14   |
  
 ## LFRic Gravity Wave benchmark
 

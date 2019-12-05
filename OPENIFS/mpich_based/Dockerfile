@@ -73,16 +73,20 @@ ENV OIFS_GRIB_LIB="-L$OIFS_GRIB_DIR/lib -leccodes_f90 -leccodes"  \
 ENV OIFS_NETCDF_DIR=/usr \
     OIFS_NETCDF_INCLUDE="-I/usr/include" \
     OIFS_NETCDF_LIB="-L/usr/lib -L/usr/lib/x86_64-linux-gnu -lnetcdff -lnetcdf_c++4 -lnetcdf -Wl,-rpath,/usr/lib" \
-    OIFS_EXTRA_LIB="$OIFS_EXTRA_LIB -ldl -lz -lrt"
+    OIFS_EXTRA_LIB="$OIFS_EXTRA_LIB -ldl -lz -lrt -Wl,-rpath,/usr/local/lib"
 
 RUN cd $OIFS_HOME/make && fcm make -v -j 4 -f oifs.cfg
-
-# This is needed so that OpenIFS finds the dynamic libraries
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # Create a separate user to run as nonroot
 RUN groupadd --gid 1000 oifs && \
     useradd --uid 1000 --gid oifs --shell /bin/bash --create-home oifs_user
+
+# Add executable permissions to oifs binaries
+RUN chmod +x /oifs/make/gnu-opt/oifs/bin/*
+
+# Copy binaries to standard location and remove sources
+RUN cp /oifs/make/gnu-opt/oifs/bin/* /usr/local/bin && \
+    rm -rf /oifs
 
 USER oifs_user
 

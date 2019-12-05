@@ -6,7 +6,7 @@ MAINTAINER Pablo Echevarria <pablo.echevarria@bsc.es>
 RUN apt-get update && apt-get install -y \
         build-essential             \
         wget                        \
-        gcc gfortran \
+        gcc gfortran libgfortran4 \
         openssh-client \
 	libnetcdf-dev libnetcdff-dev libhdf5-dev \
         libeccodes-dev libeccodes-data libeccodes-tools \

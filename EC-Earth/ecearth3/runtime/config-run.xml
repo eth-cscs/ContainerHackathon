@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+
+<Configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <Translation name="RUN_OCE">
+        <Description>Run script file (oce only run)</Description>
+        <Template>ece-nemo.sh.tmpl</Template>
+        <Target>ece-nemo.sh</Target>
+        <Properties>executable</Properties>
+    </Translation>
+
+    <Translation name="RUN_ESM">
+        <Description>Run script file (coupled run: atm+esm components)</Description>
+        <Template>ece-esm.sh.tmpl</Template>
+        <Target>ece-esm.sh</Target>
+        <Properties>executable</Properties>
+    </Translation>
+
+    <Translation name="RUN_LSM">
+        <Description>Run script file (offline land surface run)</Description>
+        <Template>ece-lsm.sh.tmpl</Template>
+        <Target>ece-lsm.sh</Target>
+        <Properties>executable</Properties>
+    </Translation>
+
+    <Translation name="RT_CTRL_CHE">
+        <Description>Control file for TM5</Description>
+        <Template>ctrl/tm5-config-run.rc.tmpl</Template>
+        <Target>ctrl/tm5-config-run.rc</Target>
+        <Properties>executable</Properties>
+    </Translation>
+
+    <xi:include href="platform/bsc-nord3.xml" />
+    <xi:include href="platform/bsc-marenostrum4.xml" />
+    <xi:include href="platform/dmi-hpcdev-intel.xml" />
+    <xi:include href="platform/ecmwf-cca-cray.xml" />
+    <xi:include href="platform/ecmwf-cca-intel.xml" />
+    <xi:include href="platform/fmi-voima.xml" />
+    <xi:include href="platform/knmi-rhino.xml" />
+    <xi:include href="platform/csc-puhti-intel.xml" />
+    <xi:include href="platform/nsc-bi.xml" />
+    <xi:include href="platform/nsc-tetralith.xml" />
+    <xi:include href="platform/pdc-beskow.xml" />
+    <xi:include href="platform/surfsara-cartesius.xml" />
+    <xi:include href="platform/ubuntu-gnu-mpich.xml" />
+    <Model name="GENERAL">
+
+        <Parameter name="EXP_NAME">
+            <Description>Experiment name (4 letters)</Description>
+            <Type>STRING</Type>
+            <Value>ECE3</Value>
+        </Parameter>
+
+        <Parameter name="RUN_START_DATE">
+            <Description>Start date of the simulation. Use any reasonable syntax.</Description>
+            <Type>DATE</Type>
+            <Value>1990-01-01</Value>
+        </Parameter>
+
+        <Parameter name="RUN_END_DATE">
+            <Description>End date of the simulation. Use any reasonable syntax.</Description>
+            <Type>STRING</Type>
+            <Value>${run_start_date} + 1 day</Value>
+        </Parameter>
+
+        <Parameter name="FORCE_RUN_FROM_SCRATCH">
+            <Description>Start simulation from scratch, possibly ignoring any restart files. [true/false]</Description>
+            <Type>BOOLEAN</Type>
+            <Value>false</Value>
+        </Parameter>
+
+        <Parameter name="RST_FREQ">
+            <Description>Restart frequency, e.g., 2 months</Description>
+            <Type>STRING</Type>
+            <Value>1 day</Value>
+        </Parameter>
+
+        <Parameter name="RUN_NUM_LEGS">
+            <Description>Number of restart legs</Description>
+            <Type>INTEGER</Type>
+            <Value>1</Value>
+        </Parameter>
+
+        <Parameter name="OUTPUT_CONTROL_FILES_DIR">
+            <Description>The path to the IFS ppt and NEMO file_def file dir</Description>
+            <Type>PATH</Type>
+            <Value>ctrl</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="OASIS">
+
+        <Parameter name="CPL_FREQ_ATM_CHE_HRS">
+            <Description>Coupling frequency between IFS and TM5 in hours</Description>
+            <Type>INTEGER</Type>
+            <Value>6</Value>
+        </Parameter>
+
+        <Parameter name="CPL_FREQ_ATM_LPJG_HRS">
+            <Description>Coupling frequency between IFS|TM5 and LPJG in hours</Description>
+            <Type>INTEGER</Type>
+            <Value>24</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="IFS">
+
+        <Parameter name="GRID">
+            <Description>Resolution of IFS grid</Description>
+            <Type>STRING</Type>
+            <Value>T159L62</Value>
+        </Parameter>
+
+        <Parameter name="NUMPROC">
+            <Description>Number of processors running IFS</Description>
+            <Type>INTEGER</Type>
+            <Value>64</Value>
+        </Parameter>
+
+        <Parameter name="CMIP6">
+            <Description>Use CMIP6 forcings (TRUE or FALSE)</Description>
+            <Type>BOOLEAN</Type>
+            <Value>TRUE</Value>
+        </Parameter>
+
+        <Parameter name="CMIP6_SCENARIO">
+            <Description>SSP selection for 2015 onwards</Description>
+            <Type>STRING</Type>
+            <Value>historical</Value>
+        </Parameter>
+
+        <Parameter name="CMIP6_A4xCO2">
+            <Description>Use Abrupt4xCO2 in CMIP6 DECK (TRUE or FALSE)</Description>
+            <Type>BOOLEAN</Type>
+            <Value>FALSE</Value>
+        </Parameter>
+
+        <Parameter name="CMIP6_1PCTCO2">
+            <Description>Use 1pctCO2 in CMIP6 DECK (TRUE or FALSE)</Description>
+            <Type>BOOLEAN</Type>
+            <Value>FALSE</Value>
+        </Parameter>
+
+        <Parameter name="CMIP5">
+            <Description>Use CMIP5 forcings (TRUE or FALSE)</Description>
+            <Type>BOOLEAN</Type>
+            <Value>TRUE</Value>
+        </Parameter>
+
+        <Parameter name="CMIP5_RCP">
+            <Description>RCP selection (1-4 or 0 for historical run)</Description>
+            <Type>INTEGER</Type>
+            <Value>0</Value>
+        </Parameter>
+
+        <Parameter name="CMIP_FIXYEAR">
+            <Description>Fix CMIP5/CMIP6 forcings at the indicated year (or 0 to ignore for transient runs)</Description>
+            <Type>INTEGER</Type>
+            <Value>0</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="NEM">
+
+        <Parameter name="GRID">
+            <Description>Resolution of NEMO grid</Description>
+            <Type>STRING</Type>
+            <Value>ORCA1L75</Value>
+        </Parameter>
+
+        <Parameter name="NUMPROC">
+            <Description>Number of processors running NEMO</Description>
+            <Type>INTEGER</Type>
+            <Value>64</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="XIO">
+
+        <Parameter name="NUMPROC">
+            <Description>Number of processors running XIOS</Description>
+            <Type>INTEGER</Type>
+            <Value>1</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="TM5">
+
+        <Parameter name="NLEVS">
+            <Description>Number of levels in TM5 (4, 10, 34 or 91)</Description>
+            <Type>INTEGER</Type>
+            <Value>10</Value>
+        </Parameter>
+
+        <Parameter name="ISTART">
+            <Description>TM5 initial tracer fields option (2,5,9,31,32 or 33)</Description>
+            <Type>INTEGER</Type>
+            <Value>9</Value>
+        </Parameter>
+
+        <Parameter name="TIME_STEP_SEC">
+            <Description>TM5 time step in seconds</Description>
+            <Type>INTEGER</Type>
+            <Value>3600</Value>
+        </Parameter>
+
+        <Parameter name="NUMPROC_X">
+            <Description>Number of processors in the X direction running TM5 (max 4)</Description>
+            <Type>INTEGER</Type>
+            <Value>2</Value>
+        </Parameter>
+
+        <Parameter name="NUMPROC_Y">
+            <Description>Number of processors in the Y direction running TM5 (max 45)</Description>
+            <Type>INTEGER</Type>
+            <Value>45</Value>
+        </Parameter>
+
+        <Parameter name="EMISS_FIXYEAR">
+            <Description>Fix EMISSIONS at the indicated year (or 0 to ignore)</Description>
+            <Type>INTEGER</Type>
+            <Value>0</Value>
+        </Parameter>
+
+    </Model>
+
+    <Model name="LPJG">
+
+        <Parameter name="TIME_STEP_SEC">
+            <Description>LPJ-GUESS time step in seconds</Description>
+            <Type>INTEGER</Type>
+            <Value>86400</Value>
+        </Parameter>
+
+        <Parameter name="NUMPROC">
+            <Description>Number of processors running LPJG (min )</Description>
+            <Type>INTEGER</Type>
+            <Value>32</Value>
+        </Parameter>
+
+        <Parameter name="LPJG_FIXNDEPAFTER">
+            <Description>Fix N-Deposition from (>=0: year, -1:off)</Description>
+            <Type>INTEGER</Type>
+            <Value>2099</Value>
+            <!-- This is a hack as the final year (2100) is missing in the dataset -->
+        </Parameter>
+
+        <Parameter name="LPJG_FIXLUAFTER">
+            <Description>Fix Land-Use from (>=0: year, -1:off)</Description>
+            <Type>INTEGER</Type>
+            <Value>-1</Value>
+        </Parameter>
+    </Model>
+
+</Configuration>

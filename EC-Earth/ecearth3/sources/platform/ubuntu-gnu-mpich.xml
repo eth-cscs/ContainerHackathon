@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <Platform name="ubuntu-gnu-mpich">
+        <Description>
+            HOST:        
+            ARCH:        linux_x86_64
+            CPU MODEL:   
+            MAINTAINER:  Pablo Echevarria pablo.echevarria@bsc.es
+            COMPILER:    gnu 
+            MPI:         MPICH
+            BLAS/LAPACK: 
+        </Description>
+
+        <Parameter name="ECEARTH_SRC_DIR">
+            <Description>Base directory for EC-Earth sources</Description>
+            <Type>PATH</Type>
+            <Value>/home/ecearth/ec-earth/sources</Value>
+        </Parameter>
+
+        <Parameter name="MPI_BASE_DIR">
+            <Description>MPI base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/</Value>
+        </Parameter>
+
+        <Parameter name="MPI_INC_SUBDIR">
+            <Description>MPI include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>include</Value>
+        </Parameter>
+
+        <Parameter name="MPI_LIB_SUBDIR">
+            <Description>MPI lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib</Value>
+        </Parameter>
+
+        <Parameter name="MPI_LIBS_WITHOUT_L">
+            <Description>MPI libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>mpi mpifort</Value>
+        </Parameter>
+
+        <Parameter name="LAPACK_BASE_DIR">
+            <Description>LAPACK base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/</Value>
+        </Parameter>
+
+        <Parameter name="LAPACK_LIB_SUBDIR">
+            <Description>LAPACK lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib/x86_64-linux-gnu/</Value>
+        </Parameter>
+
+        <Parameter name="LAPACK_LIBS_WITHOUT_L">
+            <Description>LAPACK libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>blas lapack</Value>
+        </Parameter>
+
+        <Parameter name="NETCDF_BASE_DIR">
+            <Description>NetCDF base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/</Value>
+            <Value></Value>
+        </Parameter>
+
+        <Parameter name="NETCDF_INC_SUBDIR">
+            <Description>NetCDF include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>include</Value>
+        </Parameter>
+
+        <Parameter name="NETCDF_LIB_SUBDIR">
+            <Description>NetCDF lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib/x86_64-linux-gnu/</Value>
+        </Parameter>
+
+        <Parameter name="NETCDF_LIBS_WITHOUT_L">
+            <Description>NetCDF libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>netcdff netcdf</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_BASE_DIR">
+            <Description>GRIB API base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_INC_SUBDIR">
+            <Description>GRIB API include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib/x86_64-linux-gnu/fortran/gfortran-mod-15/</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_LIB_SUBDIR">
+            <Description>GRIB API lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib/x86_64-linux-gnu/fortran/gfortran-mod-15/</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_LIBS_WITHOUT_L">
+            <Description>GRIB_API libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>eccodes_f90 eccodes</Value>
+        </Parameter>
+
+        <Parameter name="GRIBEX_BASE_DIR">
+            <Description>GRIBEX base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/local/lib/</Value>
+        </Parameter>
+
+        <Parameter name="GRIBEX_LIB_SUBDIR">
+            <Description>GRIBEX lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="GRIBEX_LIBS_WITHOUT_L">
+            <Description>GRIBEX libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>gribexR64</Value>
+        </Parameter>
+
+        <Parameter name="JPEG_BASE_DIR">
+            <Description>JPEG base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr</Value>
+        </Parameter>
+
+        <Parameter name="JPEG_INC_SUBDIR">
+            <Description>JPEG include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="JPEG_LIB_SUBDIR">
+            <Description>JPEG lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib64</Value>
+        </Parameter>
+
+        <Parameter name="JPEG_LIBS_WITHOUT_L">
+            <Description>JPEG libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>jpeg</Value>
+        </Parameter>
+
+        <Parameter name="SZIP_BASE_DIR">
+            <Description>SZIP base directory</Description>
+            <Type>PATH</Type>
+            <Value>/apps/SZIP/2.1.1/INTEL</Value>
+        </Parameter>
+
+        <Parameter name="SZIP_INC_SUBDIR">
+            <Description>SZIP include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>include</Value>
+        </Parameter>
+
+        <Parameter name="SZIP_LIB_SUBDIR">
+            <Description>SZIP lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib</Value>
+        </Parameter>
+
+        <Parameter name="SZIP_LIBS_WITHOUT_L">
+            <Description>SZIP libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>sz</Value>
+        </Parameter>
+
+        <Parameter name="HDF4_BASE_DIR">
+            <Description>HDF4 base directory</Description>
+            <Type>PATH</Type>
+            <Value>/apps/HDF4/4.2.12_no_NETCDF/INTEL</Value>
+        </Parameter>
+
+        <Parameter name="HDF4_INC_SUBDIR">
+            <Description>HDF4 include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>include</Value>
+        </Parameter>
+
+        <Parameter name="HDF4_LIB_SUBDIR">
+            <Description>HDF4 lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib</Value>
+        </Parameter>
+
+        <Parameter name="HDF4_LIBS_WITHOUT_L">
+            <Description>HDF4 libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>mfhdf df</Value>
+        </Parameter>
+
+        <Parameter name="HDF5_BASE_DIR">
+            <Description>HDF5 base directory</Description>
+            <Type>PATH</Type>
+            <Value>/usr/</Value>
+        </Parameter>
+
+        <Parameter name="HDF5_INC_SUBDIR">
+            <Description>HDF5 include directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>include</Value>
+        </Parameter>
+
+        <Parameter name="HDF5_LIB_SUBDIR">
+            <Description>HDF5 lib directory relative to base dir</Description>
+            <Type>PATH</Type>
+            <Value>lib/x86_64-linux-gnu</Value>
+        </Parameter>
+
+        <Parameter name="HDF5_LIBS_WITHOUT_L">
+            <Description>HDF5 libraries (without -l prefix)</Description>
+            <Type>STRING</Type>
+            <Value>hdf5_hl hdf5 z</Value>
+        </Parameter>
+
+        <Parameter name="MAKE">
+            <Description>Make command (GNU make >3.81 needed!)</Description>
+            <Type>STRING</Type>
+            <Value>make</Value>
+        </Parameter>
+
+        <Parameter name="FC">
+            <Description>F90 Compiler</Description>
+            <Type>STRING</Type>
+            <Value>mpifort</Value>
+        </Parameter>
+
+        <Parameter name="FFLAGS">
+            <Description>General F90 flags for compiling</Description>
+            <Type>STRING</Type>
+            <Value>-fdefault-real-8  -fdefault-double-8 -O1 -g </Value>
+        </Parameter>
+
+        <Parameter name="FFLAGS_FREEFORM">
+            <Description>Allow for free format Fortran</Description>
+            <Type>STRING</Type>
+            <Value>-ffree-line-length-512 </Value>
+        </Parameter>
+
+        <Parameter name="FFLAGS_FIXEDFORM">
+            <Description>Expect fixed Fortran format</Description>
+            <Type>STRING</Type>
+            <Value>-ffixed-form  </Value>
+        </Parameter>
+
+        <Parameter name="FFLAGS_FPP_PREFIX">
+            <Description>Fortran preprocessor flag prefix</Description>
+            <Type>STRING</Type>
+            <Value>-D</Value>
+        </Parameter>
+
+        <Parameter name="CC">
+            <Description>C Compiler</Description>
+            <Type>STRING</Type>
+            <Value>mpicc</Value>
+        </Parameter>
+
+        <Parameter name="CFLAGS">
+            <Description>General C flags for compiling</Description>
+            <Type>STRING</Type>
+            <Value>-O1</Value>
+        </Parameter>
+
+        <Parameter name="CFLAGS_CPP_PREFIX">
+            <Description>C preprocessor flag prefix</Description>
+            <Type>STRING</Type>
+            <Value>-D</Value>
+        </Parameter>
+
+        <Parameter name="CXX">
+            <Description>C++ Compiler</Description>
+            <Type>STRING</Type>
+            <Value>mpicc</Value>
+        </Parameter>
+
+        <Parameter name="LD">
+            <Description>Linker</Description>
+            <Type>STRING</Type>
+            <Value>mpifort</Value>
+        </Parameter>
+
+        <Parameter name="LDFLAGS">
+            <Description>General flags for linking</Description>
+            <Type>STRING</Type>
+            <Value> -O1 -g </Value>
+        </Parameter>
+
+        <Parameter name="AR">
+            <Description>Command for building libraries from object files (usually ar)</Description>
+            <Type>STRING</Type>
+            <Value>ar</Value>
+        </Parameter>
+
+        <Parameter name="ARFLAGS">
+            <Description>Flags for library building command (When using ar: include u)</Description>
+            <Type>STRING</Type>
+            <Value>curv</Value>
+        </Parameter>
+
+        <Parameter name="ARFLAGS_EXTRACT">
+            <Description>Flags for library building command (When using ar: include u)</Description>
+            <Type>STRING</Type>
+            <Value>p</Value>
+        </Parameter>
+
+        <Parameter name="CPP">
+            <Description>C preprocessor command</Description>
+            <Type>STRING</Type>
+            <Value>fpp</Value>
+        </Parameter>
+
+        <Parameter name="FPP">
+            <Description>C preprocessor command</Description>
+            <Type>STRING</Type>
+            <Value>fpp</Value>
+        </Parameter>
+
+        <Parameter name="CPPFLAGS">
+            <Description>C preprocessor flags</Description>
+            <Type>STRING</Type>
+            <Value>-P -C -traditional</Value>
+        </Parameter>
+
+        <Parameter name="XIOS_CFLAGS">
+            <Description>CFLAGS flags for XIOS</Description>
+            <Type>STRING</Type>
+            <Value>-ansi -w</Value>
+        </Parameter>
+
+        <Parameter name="XIOS_ADD_LDFLAGS">
+            <Description>More LD flags for XIOS</Description>
+            <Type>STRING</Type>
+            <Value>-lstdc++</Value>
+        </Parameter>
+
+        <Parameter name="OASIS_ADD_FFLAGS">
+            <Description>More F90 flags for Oasis</Description>
+            <Type>STRING</Type>
+            <Value></Value>
+        </Parameter>
+
+        <Parameter name="OASIS_ADD_PPDEFS">
+            <Description>More CPP/FPP macros for Oasis</Description>
+            <Type>STRING</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="OASIS_ADD_LDFLAGS">
+            <Description>More LD flags for Oasis</Description>
+            <Type>STRING</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="NEMO_ADD_FFLAGS">
+            <Description>More F90 flags for Nemo</Description>
+            <Type>STRING</Type>
+            <Value>-check pointers -check uninit -fpe0</Value>
+        </Parameter>
+
+        <Parameter name="NEMO_ADD_LDFLAGS">
+            <Description>More LD flags for Nemo</Description>
+            <Type>STRING</Type>
+            <Value>-lstdc++</Value>
+        </Parameter>
+
+        <Parameter name="IFS_PPDEFS">
+            <Description>Preprocessor defs for IFS sources</Description>
+            <Type>STRING</Type>
+            <Value>linux LINUX LITTLE LITTLE_ENDIAN POINTER_64 BLAS ECCODES</Value>
+        </Parameter>
+
+        <Parameter name="IFSAUX_ADD_FFLAGS">
+            <Description>More F90 flags for ifs/ifsaux</Description>
+            <Type>STRING</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="MAKEDEPF90">
+            <Description>F90 dependency generator</Description>
+            <Type>STRING</Type>
+            <Value>${ECEARTH_SRC_DIR}/util/makedepf90/bin/makedepf90</Value>
+        </Parameter>
+
+      <Parameter name="TM5_DEFAULT_FFLAGS">
+            <Description>Default F90 flags for TM5 (ie without optimization)</Description>
+            <Type>STRING</Type>
+            <Value>-fdefault-real-8 -O1 -g</Value>
+        </Parameter>
+
+       <Parameter name="TM5_OPTIM_FFLAGS">
+            <Description>F90 optimization/debug flags for TM5</Description>
+            <Type>STRING</Type>
+            <Value/>
+        </Parameter>
+
+        <Parameter name="TM5_MDEFS_FFLAGS">
+            <Description>Model preprocessor defs</Description>
+            <Type>STRING</Type>
+            <Value/>
+        </Parameter>
+
+    </Platform>

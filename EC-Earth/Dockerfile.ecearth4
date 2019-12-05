@@ -1,0 +1,55 @@
+# Start from docker.io/ubuntu:latest + ScriptEngine
+FROM ufla/scriptengine:latest
+
+MAINTAINER Uwe Fladrich <uwe.fladrich@smhi.se>
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+           gcc gfortran \
+           build-essential cmake \
+           wget file \
+           libnetcdf-dev libnetcdff-dev libhdf5-dev \
+           libopenblas-base libopenblas-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Get and build specific MPICH version
+RUN wget -q http://www.mpich.org/static/downloads/3.1.4/mpich-3.1.4.tar.gz \
+    && tar xf mpich-3.1.4.tar.gz \
+    && cd mpich-3.1.4 \
+    && ./configure --enable-fast=all,O3 --prefix=/usr \
+    && make -j$(nproc) && make install \
+    && ldconfig \
+    && cd .. \
+    && rm -rf mpich-3.1.4 \
+    && rm mpich-3.1.4.tar.gz
+
+## Get and build ecCodes library:
+RUN wget -q https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.10.0-Source.tar.gz \
+    && tar xf eccodes-2.10.0-Source.tar.gz \
+    && mkdir -p bld && \
+       cd bld && \
+       cmake ../eccodes-2.10.0-Source \
+         -DCMAKE_INSTALL_PREFIX:PATH=/usr \
+         -DCMAKE_C_COMPILER=gcc \
+         -DCMAKE_Fortran_COMPILER=gfortran \
+         -DENABLE_NETCDF=ON \
+         -DENABLE_JPG=OFF \
+         -DENABLE_PNG=OFF \
+         -DENABLE_PYTHON=OFF \
+         -DENABLE_FORTRAN=ON \
+         -DBUILD_SHARED_LIBS=BOTH && \
+       make -j$(nproc) && make install && \
+       cd ../ && rm eccodes-2.10.0-Source.tar.gz && rm -rf eccodes-2.10.0-Source bld
+
+# Add and compile EC-Earth4 sources
+COPY ece-src.tgz /
+RUN mkdir /ece-src \
+    && cd /ece-src \
+    && tar xzf /ece-src.tgz \
+    && echo 'config: {main: {src_dir: /ece-src}}' > src-dir.yml \
+    && se src-dir.yml \
+          /ece-src/se/platforms/ubuntu-gcc-mpich.yml \
+          /ece-src/se/compile-oasis.yml \
+          /ece-src/se/compile-oifs.yml \
+    && mv /ece-src/oifs-43r3/make/ecearth-std/oifs/bin/master.exe /usr/bin/oifs.exe \
+    && rm -fr /ece-src

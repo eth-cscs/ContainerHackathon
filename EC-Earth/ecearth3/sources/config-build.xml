@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <Translation name="nemo_arch_ecconf_fcm">
+        <Description>Nemo 3.6 config file</Description>
+        <Template>nemo-3.6/ARCH/arch-ecconf.fcm.tmpl</Template>
+        <Target>nemo-3.6/ARCH/arch-ecconf.fcm</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="xios2_arch_ecconf_fcm">
+        <Description>XIOS2 config file for FCM</Description>
+        <Template>xios-2.5/arch/arch-ecconf.fcm.tmpl</Template>
+        <Target>xios-2.5/arch/arch-ecconf.fcm</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="xios2_arch_ecconf_env">
+        <Description>XIOS2 config file: env</Description>
+        <Template>xios-2.5/arch/arch-ecconf.env.tmpl</Template>
+        <Target>xios-2.5/arch/arch-ecconf.env</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="xios2_arch_ecconf_path">
+        <Description>XIOS2 config file: path</Description>
+        <Template>xios-2.5/arch/arch-ecconf.path.tmpl</Template>
+        <Target>xios-2.5/arch/arch-ecconf.path</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="ifs36r4_makefile_config">
+        <Description>IFS/36r4 makefile configuration</Description>
+        <Template>ifs-36r4/Makefile.d/Makefile.config.ecconf.tmpl</Template>
+        <Target>ifs-36r4/Makefile.d/Makefile.config.ecconf</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="oasis_makefile_config">
+        <Description>OASIS makefile configuration</Description>
+        <Template>oasis3-mct/util/make_dir/Makefile.d/Makefile.config.ecconf.tmpl</Template>
+        <Target>oasis3-mct/util/make_dir/Makefile.d/Makefile.config.ecconf</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="runoff-mapper_makefile">
+        <Description>Runoff-mapper Makefile</Description>
+        <Template>runoff-mapper/src/Makefile.tmpl</Template>
+        <Target>runoff-mapper/src/Makefile</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="amip-forcing_makefile">
+        <Description>AMIP-forcing Makefile</Description>
+        <Template>amip-forcing/src/Makefile.tmpl</Template>
+        <Target>amip-forcing/src/Makefile</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="tm5_rcfile_config">
+        <Description>TM5MP rcfile configuration</Description>
+        <Template>tm5mp/rc/main-config-ecearth3.rc.tmpl</Template>
+        <Target>tm5mp/ecconfig-ecearth3.rc</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="lpjg_cmake_config">
+        <Description>LPJ-Guess configuration for cmake</Description>
+        <Template>lpjg/CMakeLists.txt.tmpl</Template>
+        <Target>lpjg/CMakeLists.txt</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="lpjg-offline_makefile">
+        <Description>LPJ-Guess offline Makefile</Description>
+        <Template>lpjg/offline/Makefile.tmpl</Template>
+        <Target>lpjg/offline/Makefile</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="elpin_makefile_config">
+        <Description>ELPiN makefile configuration</Description>
+        <Template>util/ELPiN/src/Makefiles/makefile.tmpl</Template>
+        <Target>util/ELPiN/Makefile</Target>
+        <Properties></Properties>
+
+    </Translation>
+
+    <Translation name="grib_table_126_install_script">
+        <Description>grib table 126 installation script</Description>
+        <Template>util/grib_table_126/define_table_126.sh.tmpl</Template>
+        <Target>util/grib_table_126/define_table_126.sh</Target>
+        <Properties>executable</Properties>
+
+    </Translation>
+
+    <Model name="TM5">
+        <Parameter name="CO2_ONLY">
+            <Description>CO2-only version of TM5 (True or False)</Description>
+            <Type>STRING</Type>
+            <Value>True</Value>
+        </Parameter>
+
+        <Parameter name="NLEVS">
+            <Description>Number of levels used IN TM5 (34 or 10)</Description>
+            <Type>STRING</Type>
+            <Value>10</Value>
+        </Parameter>
+    </Model>
+
+    <Model name="LPJG">
+        <Parameter name="GRID">
+            <Description>Choose grid (T159 or T255)</Description>
+            <Type>STRING</Type>
+            <Value>T255</Value>
+        </Parameter>
+
+        <Parameter name="COMPRESS_OUTPUT">
+            <Description>Use output compression? (true or false)</Description>
+            <Type>BOOLEAN</Type>
+            <Value>true</Value>
+        </Parameter>
+    </Model>
+
+    <xi:include href="platform/bsc-nord3-intel-intelmpi.xml" />
+    <xi:include href="platform/bsc-marenostrum4-intel-intelmpi.xml" />
+    <xi:include href="platform/dmi-hpcdev-intel.xml" />
+    <xi:include href="platform/ecmwf-cca-cray-craympi.xml" />
+    <xi:include href="platform/ecmwf-cca-intel-mpi.xml" />
+    <xi:include href="platform/fmi-voima-intel.xml" />
+    <xi:include href="platform/csc-puhti-intel.xml" />
+    <xi:include href="platform/knmi-rhino.xml" />
+    <xi:include href="platform/nsc-bi-intel-intelmpi.xml" />
+    <xi:include href="platform/nsc-tetralith-intel-intelmpi.xml" />
+    <xi:include href="platform/pdc-beskow-intel-craympi.xml" />
+    <xi:include href="platform/surfsara-cartesius.xml" />
+    <xi:include href="platform/ubuntu-gnu-mpich.xml" />
+</Configuration>

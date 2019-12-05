@@ -1,0 +1,102 @@
+    <Platform name="ubuntu-gnu-mpich">
+        <Description>
+            HOST:        ubuntu-gnu-mpich
+            ARCH:        linux_x86_64
+            CPU MODEL:   
+            MAINTAINER:  Pablo Echevarria pablo.echevarria@bsc.es
+        </Description>
+
+        <Translation name="UBUNTU_CFG">
+            <Description>Platform dependent configuration (UBUNTU)</Description>
+            <Template>../classic/platform/ubuntu-gnu-mpich.cfg.tmpl</Template>
+            <Target>ecconf.cfg</Target>
+            <Properties></Properties>
+        </Translation>
+
+        <Parameter name="BUILD_ARCH">
+            <Description>Architecture used when building EC-Earth</Description>
+            <Type>STRING</Type>
+            <Value>ecconf</Value>
+        </Parameter>
+
+        <Parameter name="ECEARTH_SRC_DIR">
+            <Description>Base directory for EC-Earth sources</Description>
+            <Type>PATH</Type>
+            <Value>/home/ecearth/ec-earth/sources</Value>
+        </Parameter>
+
+        <Parameter name="RUN_DIR">
+            <Description>EC-Earth run directory</Description>
+            <Type>PATH</Type>
+            <Value>/home/ecearth/ec-earth/runtime</Value>
+        </Parameter>
+
+        <Parameter name="INI_DATA_DIR">
+            <Description>Initial data directory used by EC-Earth</Description>
+            <Type>PATH</Type>
+             <Value>/home/ecearth/ec-earth/inidata</Value>
+        </Parameter>
+
+        <Parameter name="PROC_PER_NODE">
+            <Description>Number of processors per node</Description>
+            <Type>INTEGER</Type>
+            <Value>48</Value>
+        </Parameter>
+
+        <Parameter name="RESUBMIT_JOB">
+            <Description>Automatically resubmit the job? [true|false]</Description>
+            <Type>BOOLEAN</Type>
+            <Value>false</Value>
+        </Parameter>
+
+        <Parameter name="RESUBMIT_OPT">
+            <Description>Additional options for the submit command</Description>
+            <Type>STRING</Type>
+            <Value>-W 4:00</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_BASE_DIR">
+            <Description>GRIB API base directory</Description>
+            <Type>PATH</Type>
+            <Value>/apps/GRIB/1.14.0/INTEL/</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_BIN_SUBDIR">
+            <Description>GRIB API bin directory relative to the base directory</Description>
+            <Type>PATH</Type>
+            <Value>bin</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_DEFINITION_SUBDIR">
+            <Description>GRIB API definition directory relative to the base directory</Description>
+            <Type>PATH</Type>
+            <Value>share/grib_api/definitions</Value>
+        </Parameter>
+
+        <Parameter name="GRIBAPI_SAMPLES_SUBDIR">
+            <Description>GRIB API samples directory relative to the base directory</Description>
+            <Type>PATH</Type>
+            <Value>share/grib_api/ifs_samples/grib1</Value>
+        </Parameter>
+
+        <Parameter name="ADD_TO_LD_LIBRARY_PATH">
+            <Description>Additional shared library paths needed at runtime</Description>
+            <Type>STRING</Type>
+            <Value>/apps/GRIB/1.14.0/INTEL/lib</Value>
+        </Parameter>
+
+        <Parameter name="PRE_LOAD_MODULES_CMD">
+            <Description>Command run before any modules are loaded</Description>
+            <Type>STRING</Type>
+            <Value>module purge</Value>
+        </Parameter>
+
+        <Parameter name="MODULE_LIST">
+            <Description>List of modules to load</Description>
+            <Type>STRING</Type>
+            <Value>
+              
+            </Value>
+        </Parameter>
+
+    </Platform>

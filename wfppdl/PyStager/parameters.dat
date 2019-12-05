@@ -6,7 +6,7 @@
 
 Pleas fill the following parameters list for PyStager
 
-Source_Directory = /users/hck05/Data/Src
+Source_Directory = /users/hck05/Data/Src/
 Destination_Directory = /users/hck05/Data/Rec
 Log_Directory = /p/scratch/deepacf/sampledata/log
 Rsync_Status = 1

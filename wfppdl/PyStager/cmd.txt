@@ -1,6 +1,6 @@
 
 # build a docker image 
-sudo docker build -t amozaffari/pystager:v1.02 -f Dockerfile .
+sudo docker build -t amozaffari/pystager:v1.04 -f Dockerfile .
 
 
 
@@ -15,11 +15,11 @@ sudo docker run -ti --entrypoint "sh" wfppdl/pystager:v1.0
 sudo docker run -ti \
 --entrypoint "bash" \
 --mount type=bind,source=/home/amirpasha/Move_test,target=/app \
-amozaffari/pystager:v1.02
+amozaffari/pystager:v1.04
 
 
 # how ot save a dockerfile to be exported: 
-sudo docker save -o 
+sudo docker save -o pystager_daint.tar amozaffari/pystager:v1.04
 
 # list of all container stopped or not! 
 sudo docker ps -a
@@ -28,5 +28,9 @@ sudo docker ps -a
 sudo docker container prune
 
 
+
+SARUS
 # to run V1.03 in Sarus 
-srun -C gpu  sarus run --mount=type=bind,source=/users/hck05/Data/Src,destination=/users/hck05/Data/Rec load/amozaffari/pystager:v1.03
+module load sarus 
+ sarus load pystager_daint.tar amozaffari/pystager:v1.04
+srun -C gpu  sarus run --mpi --mount=type=bind,source=/users/hck05/Data,destination=/users/hck05/Data load/amozaffari/pystager:v1.03

@@ -1,4 +1,4 @@
-#from mpi4py import MPI
+from mpi4py import MPI
 from os import walk
 import os
 import sys
@@ -9,8 +9,18 @@ import hashlib
 from os import listdir
 from os.path import isfile, join
 
-# ======================= List of functions ====================================== #
+# ini. MPI
+comm = MPI.COMM_WORLD
+my_rank = comm.Get_rank()  # rank of the node
+p = comm.Get_size()  # number of assigned nods
+my_rank = comm.Get_rank()  # rank of the node
 
+
+# ======================= List of functions ====================================== #
+if my_rank == 0:  # node is master
+
+    logger = logging.getLogger(__file__)
+    logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
 def directory_scanner(source_path,load_level):
@@ -55,7 +65,9 @@ def directory_scanner(source_path,load_level):
         list_directories = os.listdir(source_path)
 
         for d in list_directories:
-            path = source_path + d
+            # TODO : use os.path.join("foo","bar")
+    
+            path = source_path + d 
             if os.path.isdir(path):
                 list_items_to_process.append(d)
                 list_items_to_process.sort()
@@ -70,7 +82,7 @@ def directory_scanner(source_path,load_level):
                 total_size_source = total_size_source + int(size)
             else:
                 message = path,'does not exist'
-                logging.error(message) 
+                logger.error(message) 
                      
         total_num_directories = int(len(list_directories))
 
@@ -79,13 +91,13 @@ def directory_scanner(source_path,load_level):
     ## ======================= End of the Directory case =================== ##
     total_size_source = float(total_size_source / 1000000)  # human readable size source 
 
-    logging.info("=== Directory Scanner output ===")
+    logger.info("=== Directory Scanner output ===")
     message = 'Total size of the source directory is:' + str(total_size_source) + 'Gb.'
-    logging.info(message)   
+    logger.info(message)   
     message = "Total number of the files in the source directory is: " + str(total_num_files)
-    logging.info(message)   
+    logger.info(message)   
     message = "Total number of the directories  in the source directory is: " + str(total_num_directories)
-    logging.info(message)   
+    logger.info(message)   
 
     # Unifying the naming of this section for both cases : Sub - Directory or File 
     # dir_detail_list == > Including the name of the directories, size and number of teh files in each directory / for files is empty 
@@ -108,15 +120,15 @@ def data_structure_builder (source_dir, destination_dir, dir_detail_list, list_i
     if not os.path.exists(destination_dir):  # check if the Destination dir. is existing
         os_command = ("mkdir " + destination_dir)
         os.system(os_command)
-        logging.info('destination path is created')
+        logger.info('destination path is created')
     else:
-        logging.info('The destination path exists')   
+        logger.info('The destination path exists')   
 
             
     os.chdir(destination_dir) # chnage the directory to the destination 
 
     if load_level == 0:
-        logging.info('Load Level = 0 : Data Sctructure will be build')   
+        logger.info('Load Level = 0 : Data Sctructure will be build')   
 
         for dir_name in list_items_to_process: 
             #print(dir_name)
@@ -127,10 +139,10 @@ def data_structure_builder (source_dir, destination_dir, dir_detail_list, list_i
                 #print(dir_name  + " will be created ")
                 os_command = ("mkdir " + dir_name)
                 os.system(os_command)
-                logging.info(dir_name  + " is created ")
+                logger.info(dir_name  + " is created ")
 
     if load_level == 1:
-        logging.info('Load Level = 1 : File will be processed')  
+        logger.info('Load Level = 1 : File will be processed')  
 
     return 
 
@@ -141,7 +153,12 @@ def load_distributor(dir_detail_list, list_items_to_process, total_size_source, 
     # create a dictionary with p number of keys
     # for each directory they add the name to one of the keys
     transfer_dict = dict.fromkeys(list(range(1, processor_num)))
-    logging.info(transfer_dict) 
+    logger.info("The follwoing is in the load Balancer ")
+    logger.info(transfer_dict) 
+    logger.info(list_items_to_process)
+    logger.info(total_num_directories)
+    logger.info(total_num_files)
+    print("My MPI rank is : {my_rank}".format(my_rank=my_rank))
     
     # package_counter = 0 possibility to use the counter to fill
     counter = 1

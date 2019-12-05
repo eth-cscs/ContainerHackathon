@@ -13,6 +13,7 @@ import os
 
 # How to Run it! 
 # mpirun -np 6 python mpi_stager_v2.py  
+# mpiexec -np 6 python mpi_stager_v2.py  
 
 
 # for the local machine test
@@ -24,6 +25,10 @@ time.sleep(0)
 comm = MPI.COMM_WORLD
 my_rank = comm.Get_rank()  # rank of the node
 p = comm.Get_size()  # number of assigned nods
+
+print('Number of the CPU assigned')
+print(p)
+
 
 
 # ================================== ALL Nodes:  Read-in parameters ====================================== #
@@ -79,6 +84,9 @@ if not os.path.exists(source_dir):  # check if the source dir. is existing
 if my_rank == 0:  # node is master
 
     # ==================================== Master : Directory scanner ================================= #
+
+    print("The source path is  : {path}".format(path=source_dir))
+    print("The destination path is  : {path}".format(path=destination_dir))
 
     logger.info("==== Directory scanner : start ====")
     ret_dir_scanner = directory_scanner(source_dir,load_level)

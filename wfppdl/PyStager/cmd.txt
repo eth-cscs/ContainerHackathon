@@ -1,6 +1,6 @@
 
 # build a docker image 
-sudo docker build -t wfppdl/pystager:v1.01 -f Dockerfile .
+sudo docker build -t amozaffari/pystager:v1.02 -f Dockerfile .
 
 
 
@@ -15,6 +15,18 @@ sudo docker run -ti --entrypoint "sh" wfppdl/pystager:v1.0
 sudo docker run -ti \
 --entrypoint "bash" \
 --mount type=bind,source=/home/amirpasha/Move_test,target=/app \
-wfppdl/pystager:v1.01
+amozaffari/pystager:v1.02
 
 
+# how ot save a dockerfile to be exported: 
+sudo docker save -o 
+
+# list of all container stopped or not! 
+sudo docker ps -a
+
+#to kill all container 
+sudo docker container prune
+
+
+# to run V1.03 in Sarus 
+srun -C gpu  sarus run --mount=type=bind,source=/users/hck05/Data/Src,destination=/users/hck05/Data/Rec load/amozaffari/pystager:v1.03

@@ -175,10 +175,9 @@ The local folder `input/gungho` contains the namelist `gungho_configuration.nml`
 There is also an `iodef.xml` file required for parallel IO, however it is not used if the `use_xios_io` flag in the namelist is set to `.false.` as is the case here. 
 All files are available in the [Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz) on this repository.
 
-Below are times for completing the Gungho benchmark on Cray XC50 with different mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
+Below are times for completing the Gungho benchmark on Cray XC50 with different mesh resolutions, number of nodes, MPI tasks and OpenMP threads. `C24` and `C48` mesh configurations were run on 1 compute node (1 and 6 MPI tasks per node, respectively). `C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks per node).
 
-|              |   C24 mesh, 1 node       |   C48 mesh, 1 node       |
-| OMP threads  | 1 MPI task | 6 MPI tasks | 1 MPI task | 6 MPI tasks |
+| OMP threads  | C24, 1 MPI | C24, 6 MPI  | C48, 1 MPI | C48, 6 MPI  |
 | -------------| -----------| ------------| -----------| ------------|
 |       1      |  00:08:06  |  00:01:56   |  00:22:51  |  00:05:00   |
 |       2      |  00:03:24  |  00:00:57   |  00:13:18  |  00:03:26   |

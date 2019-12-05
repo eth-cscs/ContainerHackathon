@@ -56,7 +56,12 @@ ENV PATH $HOME/LFRic_trunk/gungho/bin:$PATH
 WORKDIR $HOME/LFRic_trunk/gungho/example
 ``` 
 The template starts the build from the `lfric-deps:gnu` Docker container which contains the libraries needed by the code: `MPICH`, `YAXT`, `HDF5`, `NetCDF`, `NetCDF-Fortran`, `NetCDF-C++`, `XIOS` and `pFUnit`.
-The libraries container is created from this template
+We have saved the template Dockerfile above as `lfric-gnu.docker` and we built it with the command below:
+```
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f lfric-gnu.docker -t lfric:gnu .
+```
+
+The container `lfric-deps` with the dependencies is created from this template:
 ```
 ################################################################################
 # LFRic environment: Configures and build the LFRic software stack with the
@@ -92,8 +97,6 @@ The scripts that build the libraries are provided in the repository:
 - [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh) sets up the environment and builds the dependencies of `LFRic` without the `XIOS`;
 - [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh) creates architecture files needed to build `XIOS` and builds `XIOS`.
 
-We have saved the template Dockerfile above as `lfric-gnu.docker` and we built it with the command below:
-
 ## Library versions and settings
 
 * All libraries were dynamically linked to make sure that the `LFRic` container will use the optimized libraries of the host system: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.
@@ -113,8 +116,7 @@ We have saved the template Dockerfile above as `lfric-gnu.docker` and we built i
 
 ## Tips & tricks
 
-* The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus)  supported on Piz Daint can add the proper hook to the host MPI library if the command `ldconfig` has been run to configure dynamic linker run-time bindings . Since we have installed the `MPICH` library in a non-default location, the command `ldconfig` would not be able to find the library in the custom path within the container. Therefore, before running `ldconfig` we added the path of `MPICH` to `/etc/ld.so.conf.d/mpich.conf` as in the example below:  
-  
+* The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus) supported on Piz Daint can add the proper hook to the host MPI library if the command `ldconfig` has been run to configure dynamic linker run-time bindings. Since we have installed the `MPICH` library in a non-default location, the command `ldconfig` would not be able to find the library in the custom path within the container. Therefore, before running `ldconfig` we added the path of `MPICH` to `/etc/ld.so.conf.d/mpich.conf` as in the example below:  
   ```
   # Adds config file for MPICH for Sarus on Piz Daint
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
@@ -155,30 +157,25 @@ After creating the Docker image of the `LFRic` Gungho benchmark, you load it wit
 #SBATCH --job-name=job_name
 #SBATCH --time=01:00:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-core=1
 #SBATCH --ntasks-per-node=6
 #SBATCH --cpus-per-task=1
-#SBATCH --partition=normal
 #SBATCH --constraint=gpu
-#SBATCH --reservation=esiwace_1
 #SBATCH --output=lfric-gungho.%j.out
 #SBATCH --error=lfric-gungho.%j.err
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load daint-gpu
 module load sarus
 module unload xalt
 srun sarus run --mount=type=bind,source=$PWD/input/gungho,destination=/usr/local/src/LFRic_trunk/gungho/example \
-               --mpi load/library/lfric-gungho:gnu gungho ./gungho_configuration.nml
-
+               --mpi load/library/lfric-gungho:gnu \
+               bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gungho ./gungho_configuration.nml
 ```
-The local folder `input/gungho` contains the namelist `gungho_configuration.nml` and four mesh files `mesh24.nc`, `mesh12.nc`, `mesh6.nc` and `mesh3.nc`, required
-for the multigrid preconditioner used in Gungho. There is also an `iodef.xml` file required for parallel IO, however it is not used if the `use_xios_io` flag
-in the namelist is set to `.false.` as is the case here. All files are available in the
-[Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz) on this repository.
 
-Below are times for completing the Gungho benchmark on Cray XC50 node with different number of MPI tasks and OpenMP threads.
+The local folder `input/gungho` contains the namelist `gungho_configuration.nml` and four mesh files `mesh24.nc`, `mesh12.nc`, `mesh6.nc` and `mesh3.nc`, required for the multigrid preconditioner used in Gungho. 
+There is also an `iodef.xml` file required for parallel IO, however it is not used if the `use_xios_io` flag in the namelist is set to `.false.` as is the case here. 
+All files are available in the [Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz) on this repository.
 
+We list below the times for completing the Gungho benchmark on Cray XC50 node with different number of MPI tasks and OpenMP threads:
 | OMP threads  | 1 MPI task | 6 MPI tasks |
 | -------------| -----------| ------------|
 |       1      |  00:06:57  |  00:01:43   |
@@ -192,19 +189,18 @@ After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load 
 #SBATCH --job-name=lfric-gwave
 #SBATCH --time=00:30:00
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=normal
 #SBATCH --constraint=gpu
-#SBATCH --reservation=esiwace_1
 
-export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 module load daint-gpu
 module load sarus
 module unload xalt
 srun sarus run \ 
-     --mount=type=bind,source=/scratch/snx3000/lucamar/lfric/gwave/input,destination=/usr/local/src/gwave \ 
-     --mpi load/library/lfric-gwave:gnu gravity_wave ./gravity_wave_configuration.nml
+     --mount=type=bind,source=$PWD/input/gwave,destination=/usr/local/src/LFRic_trunk/gwave/example \ 
+     --mpi load/library/lfric-gwave:gnu \
+     bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gravity_wave ./gravity_wave_configuration.nml"
 ```
 The local folder `input` contains the namelist `gravity_wave_configuration.nml` and the mesh file `mesh24.nc`: both files are available in the [Gravity Wave input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gwave.tar.gz) on this repository.
 

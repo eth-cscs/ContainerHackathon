@@ -101,7 +101,7 @@ The scripts that build the libraries are provided in the repository:
 
 * All libraries were dynamically linked to make sure that the `LFRic` container will use the optimized libraries of the host system: the `install_lfric_env.sh` script contains commented out instructions for a static build if required.
 
-* The `MPICH` version used in the current Met Office (MO) `LFRic` build system is 3.3. Here we used 3.1.4 for compatibility with Piz Daint libraries.
+* The `MPICH` version used in the current Met Office (MO) `LFRic` build system is 3.3. Here we used version 3.1.4 to ensure ABI compatibility with the Cray MPI library available on Piz Daint: please have a look at [the MPICH Wiki](https://wiki.mpich.org/mpich/index.php/ABI_Compatibility_Initiative) for more information on the ABI Compatibility Initiative.
 
 * `HDF5`, `NetCDF`, `NetCDF-Fortran`, `NetCDF-C++` and `pFUnit` are also slighlty older than in the current MO `LFRic` build system, whereas `YAXT` is the same version.
 

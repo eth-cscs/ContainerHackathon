@@ -1,5 +1,5 @@
 #base image
-FROM janvog/gpu_horovod:v1.0
+FROM janvog/gpu_horovod:v1.1
 
 #copy the source file
 COPY . /src

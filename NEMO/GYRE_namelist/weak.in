@@ -1,0 +1,15 @@
+# GYRE  nn_itend nn_stock   nn_GYRE ln_bench jpnj jpni ln_timing cores cn
+        1080     4320       1       T        3    2    T         6     1
+        1080     4320       2       T        6    4    T         24    2
+        1080     4320       4       T       12    8    T         96    8
+        1080     4320       8       T       24   16    T        384    32
+        1080     4320      16       T       48   32    T       1536   128
+        -----------------------------------------------------------------
+        1080     4320      32       T       96   64    T       6144   512
+
+# NATIVE (no container)
+nn_GYRE cores cn    max_rank_time (timing.output)
+1         6    1     23.150
+2        24    2     24.643
+4        96    8     25.858
+8       384    32    28.779

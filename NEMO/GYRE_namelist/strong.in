@@ -1,0 +1,38 @@
+# nnGYRE*2 => c*4:
+# GYRE  nn_itend nn_stock  nn_GYRE  ln_bench jpnj jpni ln_timing cores cn
+        100      4320      80       T        3    2    T         6     1
+        100      4320      80       T        4    3    T         12    1
+        100      4320      80       T        6    4    T         24    2
+        100      4320      80       T       12    8    T         96    8
+        100      4320      80       T       24   16    T        384    32
+        100      4320      80       T       48   32    T       1536   128
+        -----------------------------------------------------------------
+        100      4320      80       T       96   64    T       6144   512
+
+# NATIVE (no container)
+nn_GYRE cores  cn   max_rank_time (timing.output)
+80        6     1   OOM
+80       12     1   OOM
+80       24     2   OOM            speedup  //efficiency
+80       96     8   590.221  | 8 | 1.00/1 | 100.0% | 590.2210 |
+80      384    32   142.946  | 32 | 4.13/4 | 103.2% | 142.9460 |
+80     1536   128   51.855   | 128 | 11.38/16 |  71.1% |  51.8550 |
+80     6144   512   later...
+
+## 50 steps in the middle:
+                    50steps steps time_per_step
+0096c/timing.output 268.643 50 5.37286
+0384c/timing.output 59.5919 50 1.19184
+1536c/timing.output 15.5517 50 0.311034
+
+nn_GYRE cores  cn   speedup  //eff    cumulative
+80       96   | 8 | 1.00/1 | 100.0% | 268.6430 |
+80      384   | 32 | 4.51/4 | 112.8% |  59.5919 |
+80     1536   | 128 | 17.27/16 | 107.9% |  15.5517 |
+
+# Waiting lbc_lnk time :   22.514459 ( 4.3 %)           on MPI rank :       96
+# Waiting  global time :    9.469039 ( 1.8 %)           on MPI rank :       96
+                    mpi%
+0096c/timing.output 7.0     5.2 1.8
+0384c/timing.output 8.3     5.7 2.6
+1536c/timing.output 16.2    9.8 6.4

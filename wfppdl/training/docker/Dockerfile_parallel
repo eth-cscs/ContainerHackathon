@@ -1,6 +1,5 @@
 #base image
-FROM horovod/horovod:0.16.2-tf1.12.0-torch1.1.0-mxnet1.4.1-py3.5
-
+FROM janvog/gpu_horovod:v1.0
 
 #copy the source file
 COPY . /src
@@ -11,6 +10,6 @@ WORKDIR "/src"
 ENV PYTHONPATH=/hickle/lib/python3.6/site-packages:$PYTHONPATH
 
 # COMMAND ENTRY BASH
-CMD ["python","kitti_train.py"]
+CMD ["python","kitti_train_horovod.py"]
 
 # run in terminal in source directory: docker build -t wfppdl/parallel_training:v1.0 -f ../docker/Dockerfile_parallel .

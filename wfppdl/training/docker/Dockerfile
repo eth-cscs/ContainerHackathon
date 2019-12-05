@@ -1,5 +1,5 @@
 #base image
-FROM janvog/cpu_horovod:v1.0
+FROM janvog/cpu_horovod:v1.1
 
 #copy the source file
 COPY . /src
@@ -8,6 +8,8 @@ COPY . /src
 WORKDIR "/src"
 
 ENV PYTHONPATH=/src/hickle/lib/python3.6/site-packages:$PYTHONPATH
+
+ENV HDF5_USE_FILE_LOCKING=FALSE
 
 # COMMAND ENTRY BASH
 CMD ["python", "kitti_train.py"]

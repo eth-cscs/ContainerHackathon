@@ -117,13 +117,16 @@ All tests completed successfully. As a supplementary step, the Docker build conf
 The Docker image was transferred to Piz Daint and imported to Sarus. Due to the licensing issue with OpenIFS, no Docker repository was used and the image was exported from Docker in the form of a tar file and directly copied from machine to machine. Import and conversion to Sarus posed no problems at all.
 Running the converted image on the HPC is notably different from testing the original Docker image on the local machine. Running directly under Docker, the MPI is exclusively dealt with within the container and no workload management system is involved. On the HPC system, the interaction between MPI, container engine and workload manager needs to be considered. Particularly, there is one container started for each of the MPI ranks. This has an implication for the construction of the application container.
 
-In its original form, the EC-Earth4 run script would call mpirun by itself within the container. On Piz Daint, the Hydra Process Manager used by MPICH would then detect the presence of Slurm (because of the env variables transferred from the host by Sarus), and try to call srun (which obviously is not present within the container). In order to run, we defined the environment variable HYDRA_LAUNCHER=fork to set Hydra to use a different launcher than Slurm’s srun. This allowed us to Successfully ran test case TL21L19 with GCC+MPICH3.1.4 on a single container with 4 MPI ranks inside the container. However, parallel execution with multiple containers is out of reach for this image.
+In its original form, the EC-Earth4 run script would call mpirun by itself within the container. On Piz Daint, the Hydra Process Manager used by MPICH would then detect the presence of Slurm (because of the env variables transferred from the host by Sarus), and try to call srun (which obviously is not present within the container). In order to run, we defined the environment variable `HYDRA_LAUNCHER=fork` to set Hydra to use a different launcher than Slurm’s srun. This allowed us to Successfully ran test case TL21L19 with GCC+MPICH3.1.4 on a single container with 4 MPI ranks inside the container. However, parallel execution with multiple containers is out of reach for this image.
+
 For testing at scale, the EC-Earth4 container was stripped of all initialisation tasks. Hence, the container was just providing the OpenIFS executable, leaving out any runtime initialisation. This allows to run one container instance per MPI process, as needed. A small script was developed for the initialization of the run directory, providing any initial data and namelist files needed. This script was run manually just before queueing of the job, which was sufficient for the experimental nature of this exercise. However, this needs further development for production-like scenarios. In this setup, Slurm will run the simulation and scale it to multiple containers.
 
 With that setup, the smallest test case (TL21L19) was successfully run for a couple of time steps, using 4 MPI ranks (on 5 nodes). A series of tests was then run with the larger TL159L91 grid, simulating a ten day period. Elapsed time was measured for these tests for a varying number of nodes/processes:
-TL159L91, 10 days, 96 processes on 8 nodes: 18:26 elapsed job time
-TL159L91, 10 days, 192 processes on 16 nodes: 9:47 elapsed job time
-TL159L91, 10 days, 384 processes on 32 nodes: 5:05 elapsed job time
+
+- TL159L91, 10 days, 96 processes on 8 nodes: 18:26 elapsed job time
+- TL159L91, 10 days, 192 processes on 16 nodes: 9:47 elapsed job time
+- TL159L91, 10 days, 384 processes on 32 nodes: 5:05 elapsed job time
+
 These tests conclude the containerization exercise for EC-Earth 4.
 
 # Conclusions

@@ -30,6 +30,24 @@ to improve the process, better documentation, etc.
 Last but not least, any general comments about this Container Hackathon for
 Modellers will be really useful for the organisers.
 
+# Introduction
+
+NEMO for Nucleus for European Modelling of the Ocean is a state-of-the-art modelling framework for research activities and forecasting services in ocean and climate sciences, that has been developed in a sustainable way by a European consortium since 2008.
+The NEMO ocean model has 3 major components:
+- NEMO-OPA models the ocean {thermo}dynamics and solves the primitive equations (./src/OCE)
+- NEMO-SI3 simulates sea ice {thermo}dynamics, brine inclusions and subgrid-scale thickness variations (./src/ICE)
+- NEMO-TOP/PISCES models the {on,off}line oceanic tracers transport and biogeochemical processes (./src/TOP)
+These physical core engines are described in their respective references that must be cited for any work related to their use.
+Not only does the NEMO framework model the ocean circulation, it offers various features to enable
+- The seamless creation of embedded zooms thanks to 2-way nesting package AGRIF
+- The opportunity to integrate an external biogeochemistry model
+- Versatile data assimilation
+- The generation of diagnostics through effective XIOS_ system
+- The roll-out Earth system modeling with coupling interface based on OASIS
+Several built-in configurations are provided to evaluate the skills and performances of the model which can be used as templates for setting up new configurations (./cfgs).
+The user can also check out available idealized test cases that address specific physical processes(./tests).
+
+
 
 # Reproducibility experiments
 

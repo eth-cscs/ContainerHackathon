@@ -83,9 +83,8 @@ The first step to create an image of an application / service with docker is to 
 In order to create an image, it was necessary to create a Dockerfile containing the starting image.
 In our case:
 
-```
-TBC - Insert the Docker file
-```
+[Dockerfile](https://github.com/eth-cscs/ContainerHackathon/blob/master/NEMO/Dockerfile.ub1804_mpich314)
+
 Some useful commands and compilers software stack is than installed, such as wget, gcc, gfortran and g++. Moreover, the additional instructions of the Dockerfile include the installation of the MPI libraries (mpich) and the NEMO dependencies such as the HDF5 libraries, the NetCDF and PNetCDF libraries and the XIOS libraries useful for the parallel management of I/O.
 Some configuration files have been inserted into the utility folder, necessary for the installation of the XIOS libraries and the NEMO model. At the appropriate time, these files will be copied and inserted into the docker image using the COPY command:
 
@@ -112,13 +111,14 @@ And the ORCA\_ICE\_PISCES configuration is built:
 ```
 RUN	./makenemo -m gfortran\_docker -r ORCA2\_ICE\_PISCES -n ORCA\_ICE\_PIS
 ```
-Both images are available on Dockerhub at: asccmcc/nemo:gyre and asccmcc/nemo:orca
+Both images are available on Dockerhub:
+[asccmcc/nemo:gyre](https://hub.docker.com/r/asccmcc/nemo/tags) and [asccmcc/nemo:orca](https://hub.docker.com/r/asccmcc/nemo/tags)
 
 # Test and validation
-The docker images have been tested on a mac-os node and on the parallel architecture available at CSCS named PizDaint. 
-
-CSCS Piz Daint (6th place in November 2019 Top500 supercomputer list) is composed of more than 5000 Cray XC50 compute nodes, each equipped with a 12-core Intel Xeon E5-2690 v3 Haswell CPU with 64 GiB RAM (499.2 double-precision peak Gflop/s), and one NVIDIA Tesla P100 GPU (4.7 peak Tflop/s). The nodes communicate using Cray Aries interconnect. The Linux operating system is Cray CLE/7.0.UP01 (SLES/15).
+The docker images have been tested on a mac-os node and on the parallel architecture available at CSCS named PizDaint: Piz Daint (6th place in November 2019 Top500 supercomputer list) is composed of more than 5000 Cray XC50 compute nodes, each equipped with a 12-core Intel Xeon E5-2690 v3 Haswell CPU with 64 GiB RAM (499.2 double-precision peak Gflop/s), and one NVIDIA Tesla P100 GPU (4.7 peak Tflop/s). The nodes communicate using Cray Aries interconnect. The Linux operating system is Cray CLE/7.0.UP01 (SLES/15).
 The programming environment used for the native build was:
+
+```
 	PrgEnv-gnu/6.0.5
 	gcc/8.3.0
 	cray-mpich/7.7.10
@@ -129,7 +129,21 @@ The programming environment used for the native build was:
 	cray-libsci/19.06.1
 	cray-netcdf-hdf5parallel/4.6.3.1
 	blitz/1.0.2
+```
+
 To build and run the container images, we used docker/17.06.0-ce and sarus/1.0.1.
+The programming environment used for the container build was:
+
+```
+	ubuntu/18.04.3
+	gcc/7.4.0
+	mpich/3.1.4
+	hdf5/1.8
+	netcdf-c/4.7.2
+	netcdf-f/4.5.2
+	blitz/1.0.2
+```
+
 We were given access to 160 nodes (1920 cores).
 Two validation tests have been performed.
 
@@ -147,22 +161,27 @@ The aim of this test is to verify the performance of the container when executin
 We conducted a strong and weak scaling study using he gyre configuration as it allows to easily change the space resolution. We fixed the workload for each core by using a subdomain made of 152 x 69 points. The results are depicted in figure 1:
 
 *TBC – INSERT FIGURE WEAK SCALING*
+![weak_gyre](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/weak_scaling_gyre.png)
 
 The execution time here reported does not include the time spent for the first ten time steps during which typically some I/O operations and initialization are performed and we also omitted the time spent in the last ten time steps where the output and restart files are written. In other world, the considered execution time excludes the I/O and initialization phases at all. The jump in the execution time, that we have between 6 cores and 24 cores, is because we pass from one node to two nodes but also because with 6 cores we partially saturate the node, while with 24 cores two nodes are entirely occupied. The weak scaling curve reveals that the containerization of the NEMO model does not introduce any significant penalties in the computational performance.
 
 We executed also the strong scalability analysis by using a global domain made of 2400 x 1600 points which represents the workload of a 1/8 degree model resolution. Because of memory constraints, we were able to execute this configuration by using 8 nodes (96 cores) at least. Namely, we used 96, 384 and 1536 cores.
 
 *TBC – INSERT FIGURE STRONG SCALING G=80*
+![strong_gyre80](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_gyre_G80.png)
 
 The speedup curve is satisfying with a parallel efficiency greater than 70%. Also in this case, the I/O and the initialization phases are omitted. The tests again proved that the use of the container does not introduce any performance lost.
 
 Moreover, we performed a strong scalability test with a smaller resolution which defines a global domain with 1200 x 800 points (this represents the workload of a 1/4 degree resolution).This resolution allowed us to start the analysis with one node up to 128 nodes (1536 cores). The resulta reported in the following figure surprisingly highlighted a superlinear speedup which could be explained with a better exploitation of the memory hierarchy available in the computing nodes when the dimension of the sub domain becomes smaller. 
 
 *TBC – INSERT FIGURE STRONG SCALING G=40*
+![strong_gyre40](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_gyre_G40.png)
 
 Finally, we used the ORCA\_ICE\_PISCES configuration for testing the performance behavior of the NEMO container when dealing with a realistic configuration taking also into account the time for reading forcing data and to periodically write the prognostic variables.
 
 *TBC – INSERT FIGURE STRONG SCALING ORCA2*
+![strong_orca](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_orca2.png)
+
 
 # Conclusion and final considerations
 The learning curve for Docker container has been quite rapid; in less than one week we had the first working NEMO image. The tuning of the image parameters and its porting to a parallel architecture has been immediate thanks to the expertise of the mentor who has followed the activity.
@@ -196,12 +215,15 @@ jpni=2
 ln_timing=.true.
 ```
 
+```
 for f in `\ls GYRE*.nc | grep -v restart`; do echo $f; cdo diff $f ../REPROD_JG_4x2_G/$f; done
+```
 
 # Restart experiments
 
-
+```
 for f in `\ls *SHORT*restart*.nc`; do echo $f; f1=${f/SHORT/LONG}; cdo diff $f ../RESTART_LONG_G/$f1; done
+```
 
 # Scalability experiments
 

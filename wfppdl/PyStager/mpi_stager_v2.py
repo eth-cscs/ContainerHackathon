@@ -52,6 +52,7 @@ load_level = int(params["Load_Level"])
 # WARNING: An indication that something unexpected happened, or indicative of some problem in the near
 # ERROR: Due to a more serious problem, the software has not been able to perform some function.
 # CRITICAL: A serious error, indicating that the program itself may be unable to continue running.
+# It will copy the logging messages to the stdout, for the case of container version on HPC 
 
 if my_rank == 0:  # node is master
     logging.basicConfig(filename='pystager.log', level=logging.DEBUG,

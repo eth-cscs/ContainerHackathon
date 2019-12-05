@@ -6,9 +6,9 @@
 
 Pleas fill the following parameters list for PyStager
 
-Source_Directory = /home/amirpasha/Move_test/Source/
-Destination_Directory = /home/amirpasha/Move_test/Receiver
-Log_Directory = /home/amirpasha/Move_test/Log
+Source_Directory = /users/hck05/Data/Src
+Destination_Directory = /users/hck05/Data/Rec
+Log_Directory = /p/scratch/deepacf/sampledata/log
 Rsync_Status = 1
 Checksum_Status = 0
 Load_Level = 0

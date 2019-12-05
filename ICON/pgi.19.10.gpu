@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -eu
+
+MY_DIR=$(cd "$(dirname "$0")"; pwd)
+ICON_DIR="${MY_DIR}/../../.."
+BUILD_ENV=". /usr/share/modules/init/bash;. ${MY_DIR}/build_env_init.sh; switch_for_modules MPICH netCDF-Fortran;"
+
+. ${MY_DIR}/build_env_init.sh
+switch_for_module netCDF-Fortran
+
+NETCDF_CPPFLAGS="-I${EBROOTNETCDF}/include"
+NETCDF_LDFLAGS="-L${EBROOTNETCDF}/lib"
+NETCDF_LIBS='-lnetcdf'
+
+NETCDFF_FCFLAGS="-I${EBROOTNETCDFMINFORTRAN}/include"
+NETCDFF_LDFLAGS="-L${EBROOTNETCDFMINFORTRAN}/lib"
+NETCDFF_LIBS='-lnetcdff'
+
+BLAS_LAPACK_LIBS='-llapack -lblas'
+
+FC='mpif90'
+CC='mpicc'
+
+CFLAGS='-g -O2'
+FCFLAGS="-g -O -Mrecursive -Mallocatable=03 -acc=verystrict -ta=nvidia:cc60,cuda10.1 -Minfo=accel,inline -Mcuda ${NETCDFF_FCFLAGS}"
+CPPFLAGS="${NETCDF_CPPFLAGS}"
+NVCFLAGS='--std=c++11 -arch=sm_60 -g -O3'
+LDFLAGS="${NETCDF_LDFLAGS} ${NETCDFF_LDFLAGS}"
+LIBS="${BLAS_LAPACK_LIBS} ${NETCDFF_LIBS} ${NETCDF_LIBS} -lstdc++"
+
+NVCC='/home/cscs/.local/easybuild/software/PGI/19.10-GCC-7.3.0-2.30/linux86-64/2019/cuda/10.1/bin/nvcc'
+CLAW='/home/cscs/.local/claw/bin/clawfc'
+
+"${ICON_DIR}/configure" \
+BUILD_ENV="$BUILD_ENV" \
+CC="$CC" \
+CFLAGS="$CFLAGS" \
+CLAW="$CLAW" \
+CPPFLAGS="$CPPFLAGS" \
+FC="$FC" \
+FCFLAGS="$FCFLAGS" \
+LDFLAGS="$LDFLAGS" \
+LIBS="$LIBS" \
+NVCC="$NVCC" \
+NVCFLAGS="$NVCFLAGS" \
+--disable-coupling \
+--disable-loop-exchange \
+--disable-openmp \
+--enable-claw \
+--enable-gpu \
+"$@"
+
+# Copy runscript-related files when building out-of-source:
+if test $(pwd) != $(cd "${ICON_DIR}"; pwd); then
+  rsync -uavz ${ICON_DIR}/run . --exclude='*in' --exclude='.*'
+  rsync -uavz ${ICON_DIR}/externals . --exclude='.git' --exclude='*.f90' --exclude='*.F90' --exclude='*.c' --exclude='*.h' --exclude='*.Po' --exclude='tests' --exclude='rrtmgp*.nc' --exclude='*.mod' --exclude='*.o'
+  rsync -uavz ${ICON_DIR}/make_runscripts .
+  ln -sf ${ICON_DIR}/data
+fi
+
+# Generate input file for runscript generation:
+./config.status --file=run/create_target_header --file=run/exec.iconrun --file=run/add_run_routines --file=run/set-up.info
+

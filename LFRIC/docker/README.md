@@ -112,13 +112,12 @@ The scripts that build the libraries are provided in the repository:
 
 * Here we used the same `PSyclone` release (1.7.0) that is used by the current `LFRic` trunk (as of 4 December 2019), built with Python 2 environment (the move to
   Python 3 and newest `PSyclone` is in progress). Not every `PSyclone` release will work with every `LFRic` trunk revision. The `LFRic` - `PSyclone` compatibility
-  table is give in this [`LFRic` wiki (requires login)](https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility).
+  table is give in this [`LFRic` wiki](https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility) (requires login).
 
 ## Tips & tricks
 
-* The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus) supported on Piz Daint can add the proper hook to the host MPI library if the command `ldconfig` has been run to configure dynamic linker run-time bindings. Since we have installed the `MPICH` library in a non-default location, the command `ldconfig` would not be able to find the library in the custom path within the container. Therefore, before running `ldconfig` we added the path of `MPICH` to `/etc/ld.so.conf.d/mpich.conf` as in the example below:  
+* The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus) supported on Piz Daint can add the proper hook to the host MPI library if the command `ldconfig` has been executed to configure the dynamic linker run-time bindings. Since we have installed the `MPICH` library in a non-default location, the command `ldconfig` would not be able to find the library in the custom path within the container. Therefore, before running `ldconfig` we added the path of `MPICH` to `/etc/ld.so.conf.d/mpich.conf` as in the example below:  
   ```
-  # Adds config file for MPICH for Sarus on Piz Daint
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
   ```

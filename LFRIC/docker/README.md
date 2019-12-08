@@ -2,14 +2,16 @@
 
 A template Dockerfile to build the `LFRic` container is available below:
 ```
-################################################################################
-# LFRic environment: Settings to run the model with system gcc compiler
-#                    Builds and runs LFRic gungho benchmark with PSyclone OMP
-################################################################################
+#################################################################################
+# LFRic environment: Builds and runs LFRic Gungho benchmark with PSyclone OMP.
+# Prerequisites: LFRic build environment built with the system  GCC compiler
+                 (version 7.4.0) using Docker template 'lfric_deps.docker' and
+                 the relevant installation scripts.
+#################################################################################
 #
 FROM lfric-deps:gnu
 #
-# Define home
+# Define home and working directories
 ENV HOME /usr/local/src
 WORKDIR /usr/local/src
 #
@@ -27,13 +29,12 @@ ENV FFLAGS "-I$BUILD_DIR/XIOS/inc -I$INSTALL_DIR/include -I$INSTALL_DIR/mod"
 ENV LDFLAGS "-L$BUILD_DIR/XIOS/lib -L$INSTALL_DIR/lib -L/usr/lib -lstdc++"
 ENV CPPFLAGS "-I$INSTALL_DIR/include -I/usr/include"
 ENV LD_LIBRARY_PATH $INSTALL_DIR/lib:$INSTALL_DIR/lib64:$LD_LIBRARY_PATH
+# Path to PSyclone configuration file
+ENV PSYCLONE_CONFIG /usr/local/share/psyclone/psyclone.cfg
 #
 # Adds config file for MPICH for Sarus on Piz Daint
 RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
  && ldconfig
-#
-# Path to PSyclone configuration file
-ENV PSYCLONE_CONFIG /usr/local/share/psyclone/psyclone.cfg
 #
 # For most applications one OMP thread is enough (can be set in batch submit script)
 ENV OMP_NUM_THREADS 1
@@ -45,7 +46,7 @@ ENV LFRIC_TARGET_PLATFORM meto-spice
 COPY LFRic_trunk.tar .
 # Unpack LFRic trunk
 RUN tar -xf LFRic_trunk.tar \
-# Navigate to "gungho" directory
+# Navigate to "gungho" directory and build application
  && cd LFRic_trunk/gungho \
  && make build -j \
 # Navigate to example directory to run the application from
@@ -55,48 +56,26 @@ RUN tar -xf LFRic_trunk.tar \
 ENV PATH $HOME/LFRic_trunk/gungho/bin:$PATH
 WORKDIR $HOME/LFRic_trunk/gungho/example
 ``` 
-The template starts the build from the `lfric-deps:gnu` Docker container which
-contains the libraries needed by the code: `MPICH`, `YAXT`, `HDF5`, `NetCDF`,
-`NetCDF-Fortran`, `NetCDF-C++`, `XIOS` and `pFUnit`.
-We have saved the template Dockerfile above as `lfric-gnu.docker` and we built
+
+We have saved the template Dockerfile above as `lfric_gungho.docker` and we built
 it with the command below:
+
 ```
-docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f lfric-gnu.docker -t lfric:gnu .
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f lfric_gungho.docker -t lfric-gungho:gnu .
 ```
 
-The container `lfric-deps` with the dependencies is created from this template:
+The template starts the build from the `lfric-deps:gnu` Docker container which
+contains the libraries needed by the code: `MPICH`, `YAXT`, `HDF5`, `NetCDF`,
+`NetCDF-Fortran`, `NetCDF-C++`, `XIOS` and `pFUnit`. This dependency container
+was  built from the script
+[lfric_deps.docker](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/lfric_deps.docker)
+by running
+
 ```
-################################################################################
-# LFRic environment: Configures and build the LFRic software stack with the
-#                    system GCC compiler (version 7.4.0)
-################################################################################
-#
-FROM ubuntu:18.04
-#
-RUN apt-get update \
- && apt-get install -y build-essential gcc g++ gfortran make libtool python \
- python-pip python-setuptools subversion cmake git m4 zlib1g-dev curl libcurl4 \
- libcurl4-openssl-dev automake libtool-bin pkg-config doxygen \
- libtypes-uri-perl liburi-perl \
- wget --no-install-recommends
-#
-WORKDIR /usr/local/src
-#
-ENV HOME /usr/local/src
-#
-# Copy installation script inside the container
-# LFRic install script without the XIOS
-COPY install_lfric_env.sh .
-# Install script for XIOS
-# Copy XIOS make config files script
-COPY install_xios_env.sh .
-#
-# Build lfric environment without XIOS
-RUN chmod 755 install_lfric_env.sh install_xios_env.sh \
- && ./install_lfric_env.sh \
- && ./install_xios_env.sh
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f lfric_deps.docker -t lfric-deps:gnu .
 ```
-The scripts that build the libraries are provided in the repository:
+
+The scripts that build the libraries are also provided in the repository:
 - [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh)
   sets up the environment and builds the dependencies of `LFRic` without the `XIOS`;
 - [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh)
@@ -106,7 +85,7 @@ The scripts that build the libraries are provided in the repository:
 
 * All libraries were dynamically linked to make sure that the `LFRic` container
   will use the optimized libraries of the host system: the `install_lfric_env.sh`
- script contains commented out instructions for a static build if required.
+  script contains commented out instructions for a static build if required.
 
 * The `MPICH` version used in the current Met Office (MO) `LFRic` build system is 3.3.
   Here we used version 3.1.4 to ensure ABI compatibility with the Cray MPI library available

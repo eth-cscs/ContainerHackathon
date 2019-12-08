@@ -1,20 +1,22 @@
 #!/bin/bash
-#
-################################################################################
-# LFRic environment: Build XIOS revision 1700. The recent XIOS trunk from 
-# revision 1704 fails with segmentation fault due to changes in function
-# void CSourceFilter::buildGraph(CDataPacketPtr packet) in
-# src/filter/source_filter.cpp.
+#################################################################################
+# LFRic environment: Installs XIOS revision 1700. General prerequisites such as
+#       compilers and Python are installed in 'lfric_deps.docker'. Other LFRic
+#       build dependencies are installed in 'install_lfric_env.sh' script (to
+#       be run before this script).
+# Note: Configured build with "--enable-shared" for building shared library.
+#       The recent XIOS trunk from revision 1704 onwards fails with segmentation
+#       fault due to changes in function
+#       'void CSourceFilter::buildGraph(CDataPacketPtr packet)'
+#       in src/filter/source_filter.cpp
 # Prerequisites: MPICH (version 3.1.4), HDF5 (version 1.8.16) and
 #                NETCDF (version 4.3.3.1)
-################################################################################  
+#################################################################################
 #
 # Set the compiler environment
 COMP_PACKAGE_DIR=$HOME/gnu_env
-###mkdir -p $COMP_PACKAGE_DIR
 # Set path to installation directory
 export INSTALL_DIR=$COMP_PACKAGE_DIR/usr
-###mkdir -p $INSTALL_DIR
 export PATH=$INSTALL_DIR/bin:$PATH
 export LD_LIBRARY_PATH=$INSTALL_DIR/lib:$INSTALL_DIR/lib64:$LD_LIBRARY_PATH
 export CPPFLAGS="-I$INSTALL_DIR/include"
@@ -22,15 +24,14 @@ export FFLAGS="-I$INSTALL_DIR/include"
 export LDFLAGS="-L$INSTALL_DIR/lib"
 # Set path to build directory
 export BUILD_DIR=$COMP_PACKAGE_DIR/build
-###mkdir -p $BUILD_DIR
 # Set number of cores for building
 NCORES=2
 #
-################################################################################ 
+#################################################################################
 #
 # Set XIOS revision
 XIOS_VERSION=1700
-# XIOS requies perl (should come with Ubuntu 18.04)
+# XIOS requies perl (installed in 'lfric_deps.docker', e.g. 'libtypes-uri-perl')
 # Set paths to HDF5 and NetCDF
 export HDF5_DIR=$INSTALL_DIR
 export NETCDF_DIR=$INSTALL_DIR
@@ -90,7 +91,6 @@ HDF5_LIB="-lhdf5_hl -lhdf5"
 EOF
 # Navigate back to the main XIOS directory
 cd ../
-# Make
+# Build and install
 echo $PWD
 ./make_xios --full --arch $SYSTEM_NAME --job $NCORES
-#

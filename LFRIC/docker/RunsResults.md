@@ -43,8 +43,8 @@ All files are available in the
 on this repository.
 
 The Gungho application will produce a single text output for a serial run
-(single MPI task) or `PET**.gungho.Log` outputs for multiple MPI tasks, and
-checksums stored in `gungho-checksum.txt` output. Depending on the `&io`
+(single MPI task) or `PET**.gungho.Log` outputs for multiple MPI tasks, as well
+as checksums stored in `gungho-checksum.txt` output. Depending on the `&io`
 namelist's settings, it will also produce diagnostic outputs such as
 
 * Overall application run times stored in `timer.txt` (set by the
@@ -53,9 +53,9 @@ namelist's settings, it will also produce diagnostic outputs such as
   (set by the `subroutine_counters` flag to `.true.`);
 * Plots of the results (set by the `write_diag` and `diagnostic_frequency`
   options);
-* `XIOS` client output and error logs (`xios_client.out` and `xios_client.err`)
+* `XIOS` client output and error logs (`xios_client.out` and `xios_client.err`
   for a serial run/single MPI task; `xios_client_**.out` and `xios_client_**.err`
-  for multiple MPI tasks if `use_xios_io` flag is set to `.true.`.
+  for multiple MPI tasks) if `use_xios_io` flag is set to `.true.`.
 
 Below are times for completing the Gungho benchmark on Cray XC50 with different
 mesh resolutions, number of nodes, MPI tasks and OpenMP threads. The times are
@@ -210,10 +210,11 @@ and the mesh file `mesh24.nc`: both files are available in the
 on this repository.
 
 This folder is a trimmed-down copy of the folder
-`LFRIC_trunk/miniapps/gravity_wave/example`. Other input files, not present
-in `input/gwave` folder as they are not used, but present in the `LFRic`
-repository are mesh files `mesh12.nc`, `mesh6.nc` and `mesh3.nc` (if the
-multigrid preconditioner is used) and `iodef.xml` (if parallel IO is used).
+`LFRIC_trunk/miniapps/gravity_wave/example`. There are also other input files
+present in the `LFRic` repository: `mesh12.nc`, `mesh6.nc` and `mesh3.nc` (for
+the multigrid preconditioner) and `iodef.xml` (parallel IO). They are not
+present in the `input/gwave` folder as neither `l_multigrid` nor `use_xios_io`
+flags were set to `.true.` for the Piz Daint run.
 
 The Gravity Wave application will produce outputs similar to the Gungho
 application depending on the namelists' settings.

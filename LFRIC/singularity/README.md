@@ -1,7 +1,7 @@
 # How to build a Singularity container of LFRIC
 
-_**Note**: For more info please contact
-[Simon Wilson](mailto:simon.wilson@ncas.ac.uk) and @lucamar (mentor)._
+_**Note**: For more info please contact [Simon Wilson](mailto:simon.wilson@ncas.ac.uk)
+and [@lucamar](https://github.com/lucamar) (mentor)._
 
 This is built on previous work using Singularity to create a LFRic build system.
 LFRic has a large dependency tree and is currently being developed by anumber of
@@ -57,7 +57,7 @@ export EXTERNAL_STATIC_LIBRARIES = yaxt yaxt_c xios netcdff netcdf hdf5_hl hdf5 
 singularity shell -B /opt/intel:/opt/intel lfric_usr.sif #Start singularity with bind points for the local Intel compilers.
 ```
 
-### The inside the container
+### Inside the container
 
 ```
 . /opt/intel/compilers_and_libraries_2017.4.196/linux/bin/ifortvars.sh intel64 #Change compilers_and_libraries_2017.4.196 to match the same major number of the Intel compiler used to build the container. Ignore the "WARNING: 'gcc' was not found" message.

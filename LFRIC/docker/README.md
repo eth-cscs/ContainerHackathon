@@ -1,7 +1,7 @@
 # How to build a Docker container of LFRic
 
-_**Note**: For more info please contact
-[Iva Kavcic](mailto:iva.kavcic@metoffice.gov.uk) and @lucamar (mentor)._
+_**Note**: For more info please contact [Iva Kavcic](mailto:iva.kavcic@metoffice.gov.uk)
+and [@lucamar](https://github.com/lucamar) (mentor)._
 
 ## Gungho benchmark
 

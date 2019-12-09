@@ -1,0 +1,8 @@
+Next objectives : 
+
+1)building up the data structure on a single node ( as a master node or second tier- node )
+    -> external function : 
+    data_structure builder will read in the output
+    cereat the data strcuture from top to bottom 
+2) communicating the all folders and sub folders to the slave nodes (with their local address)
+3) general usage structure and communication channels for generic usage of the PyStager 

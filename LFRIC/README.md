@@ -21,10 +21,10 @@ information from a supported API, PSyclone generates code exploiting different
 parallel programming models.
 
 More detailed information about LFRic and further references can be found in
-[Introduction to LFRic](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicIntro.md).
+[*Introduction to LFRic*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicIntro.md) section.
 
 A quick guide for obtaining LFRic and PSyclone codes/releases can be found in
-[LFRic and PSyclone Repositories and Code](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicPSycloneRepoCode.md).
+[*LFRic and PSyclone repositories and code*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicPSycloneRepoCode.md) section.
 
 ## LFRic containers
 
@@ -32,7 +32,7 @@ Instructions on building and runing LFRic in two container platforms,
 [Docker CE](https://docs.docker.com/install/) and
 [Singularity](https://sylabs.io/docs/), can be found following the links below:
 
-- [LFRic Docker container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md),
+- [LFRic Docker container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md);
 - [LFRc Singularity container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/singularity/README.md).
 
 

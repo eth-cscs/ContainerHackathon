@@ -210,6 +210,38 @@ mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
 |       1      |  00:08:06  |  00:01:56   |  00:22:51  |  00:05:00   |
 |       2      |  00:03:24  |  00:00:57   |  00:13:18  |  00:03:26   |
 
+<table>
+    <thead>
+        <tr>
+            <th rowspan=2>OMP threads</th>
+            <th colspan=2>C24</th>
+            <th colspan=2>C24</th>
+        </tr>
+        <tr>
+            <th>1 MPI</th>
+            <th>6 MPI</th>
+            <th>1 MPI</th>
+            <th>6 MPI</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>1</th>
+            <th>00:08:06</th>
+            <th>00:01:56</th>
+            <th>00:22:51</th>
+            <th>00:05:00</th>
+        </tr>
+        <tr>
+            <th>2</th>
+            <th>00:03:24</th>
+            <th>00:00:57</th>
+            <th>00:13:18</th>
+            <th>00:03:26</th>
+        </tr>
+    </tbody>
+</table>
+
 `C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks per node).
 
 | OMP threads  | C96, 6 MPI | C192, 6 MPI  |

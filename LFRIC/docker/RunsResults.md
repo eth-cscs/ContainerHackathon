@@ -24,21 +24,47 @@ srun sarus run --mount=type=bind,source=$PWD/input/gungho,destination=/usr/local
                bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gungho ./gungho_configuration.nml
 ```
 
-The local folder `input/gungho` contains the namelist `gungho_configuration.nml`
-and four mesh files required for the multigrid preconditioner used in Gungho:
-`mesh24.nc`, `mesh12.nc`, `mesh6.nc` and `mesh3.nc`.
-There is also an `iodef.xml` file required for parallel IO, however it is not used
-if the `use_xios_io` flag in the namelist is set to `.false.` as is the case here.
+The local folder `input/gungho` is a copy of the folder
+`LFRIC_trunk/gungho/example` and contains:
+
+- Namelist `gungho_configuration.nml`;
+- Four mesh files required for the multigrid preconditioner (`l_multigrid` flag
+  set to `.true` in the `&multigrid` namelist) used in Gungho (`mesh24.nc`,
+  `mesh12.nc`, `mesh6.nc` and `mesh3.nc`);
+- `iodef.xml` file required for parallel IO.
+
+The IO file, however is not used as the `use_xios_io` flag in the `&io`
+namelist is set to `.false.`. If no diagnostic output (e.g. plots) are
+required, it is recommended that the `write_diag` flag in the `&io`
+namelist is also set to `.false.`.
 
 All files are available in the
 [Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz)
 on this repository.
 
-Below are times for completing the Gungho benchmark on Cray XC50 with different
-mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
-*Note:* These times ar Slurm completion times so they include overheads of job submission (prologue and epilogue).
+The Gungho application will produce a single text output for a serial run
+(single MPI task) or `PET**.gungho.Log` outputs for multiple MPI tasks, and
+checksums stored in `gungho-checksum.txt` output. Depending on the `&io`
+namelist's settings, it will also produce diagnostic outputs such as
 
-`C24` and `C48` mesh configurations were run on 1 compute node (1 and 6 MPI tasks per node, respectively).
+* Overall application run times stored in `timer.txt` (set by the
+  `subroutine_timers` flag to `.true.`);
+* Overall application counter of halo calls stored in `halo_calls_counter.txt`
+  (set by the `subroutine_counters` flag to `.true.`);
+* Plots of the results (set by the `write_diag` and `diagnostic_frequency`
+  options);
+* `XIOS` client output and error logs (`xios_client.out` and `xios_client.err`)
+  for a serial run/single MPI task; `xios_client_**.out` and `xios_client_**.err`
+  for multiple MPI tasks if `use_xios_io` flag is set to `.true.`.
+
+Below are times for completing the Gungho benchmark on Cray XC50 with different
+mesh resolutions, number of nodes, MPI tasks and OpenMP threads. The times are
+from the LFRic `timer.txt` outputs and Slurm job outputs. Note that the Slurm
+completion times are longer, as they include overheads of job submission
+(prologue and epilogue).
+
+`C24` and `C48` mesh configurations were run on 1 compute node (1 and 6 MPI
+tasks per node, respectively).
 
 <table>
     <thead>
@@ -110,7 +136,8 @@ mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
     </tbody>
 </table>
 
-`C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks per node).
+`C96` and `C192` mesh configurations were run on 6 compute nodes (6 MPI tasks
+per node).
 
 <table>
     <thead>
@@ -176,12 +203,24 @@ srun sarus run \
      --mpi load/library/lfric-gwave:gnu \
      bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gravity_wave ./gravity_wave_configuration.nml"
 ```
-The local folder `input` contains the namelist `gravity_wave_configuration.nml`
+
+The local folder `input/gwave` contains the namelist `gravity_wave_configuration.nml`
 and the mesh file `mesh24.nc`: both files are available in the
 [Gravity Wave input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gwave.tar.gz)
 on this repository.
 
-The Gravity Wave benchmark on a single MPI task takes around 5 minutes to complete on a single Cray XC50 node:
+This folder is a trimmed-down copy of the folder
+`LFRIC_trunk/miniapps/gravity_wave/example`. Other input files, not present
+in `input/gwave` folder as they are not used, but present in the `LFRic`
+repository are mesh files `mesh12.nc`, `mesh6.nc` and `mesh3.nc` (if the
+multigrid preconditioner is used) and `iodef.xml` (if parallel IO is used).
+
+The Gravity Wave application will produce outputs similar to the Gungho
+application depending on the namelists' settings.
+
+The Gravity Wave benchmark on a single MPI task takes around 5 minutes to
+complete on a single Cray XC50 node:
+
 ```
 Batch Job Summary Report for Job "lfric-gwave" (18507334) on daint
 -----------------------------------------------------------------------------------------------------

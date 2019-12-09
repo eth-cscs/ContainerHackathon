@@ -32,8 +32,8 @@ Instructions on building and runing LFRic in two container platforms,
 [Docker CE](https://docs.docker.com/install/) and
 [Singularity](https://sylabs.io/docs/), can be found following the links below:
 
-- [LFRic Docker container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md);
-- [LFRc Singularity container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/singularity/README.md).
+* [LFRic Docker container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md);
+* [LFRc Singularity container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/singularity/README.md).
 
 
 

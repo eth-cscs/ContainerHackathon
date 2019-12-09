@@ -99,9 +99,9 @@ are envisaged becoming operational in the middle of the next decade.
 
 ## References
 
-- Adams SV, Ford RW, Hambley M, Hobson JM, Kavcic I, Maynard CM, Melvin T,
+* Adams SV, Ford RW, Hambley M, Hobson JM, Kavcic I, Maynard CM, Melvin T,
   Mueller EH, Mullerworth S, Porter AR, Rezny M, Shipway BJ and Wong R (2019):
   [LFRic: Meeting the challenges of scalability and performance portability in
   Weather and Climate models.](https://doi.org/10.1016/j.jpdc.2019.02.007) Journal of Parallel and Distributed Computing.
-- [MO Research News, May 2019](https://www.metoffice.gov.uk/research/news/2019/gungho-and-lfric)
-- [MO LFRic Modelling approach](https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric)
+* [MO Research News, May 2019](https://www.metoffice.gov.uk/research/news/2019/gungho-and-lfric)
+* [MO LFRic Modelling approach](https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric)

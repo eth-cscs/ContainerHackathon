@@ -1,5 +1,8 @@
 # How to build a Docker container of LFRic
 
+_**Note**: For more info please contact
+[Iva Kavcic](mailto:iva.kavcic@metoffice.gov.uk) and @lucamar (mentor)._
+
 ## Gungho benchmark
 
 As outlined in
@@ -172,17 +175,22 @@ section.
 ## Library versions and settings
 
 * All libraries were dynamically linked to make sure that the `LFRic` container
-  will use the optimized libraries of the host system: the `install_lfric_env.sh`
-  script contains commented out instructions for a static build if required.
+  will use the optimized libraries of the host system: the
+  `install_lfric_env.sh` script contains commented out instructions for a static
+  build if required.
 
-* The `MPICH` version used in the current Met Office (MO) `LFRic` build system is 3.3.
-  Here we used version 3.1.4 to ensure ABI compatibility with the Cray MPI library available
-  on Piz Daint: please have a look at
+* The `MPICH` version used in the current Met Office (MO) `LFRic` build system
+  is 3.3. Here we used version 3.1.4 to ensure ABI compatibility with the Cray
+  MPI library available on Piz Daint: please have a look at
   [the MPICH Wiki](https://wiki.mpich.org/mpich/index.php/ABI_Compatibility_Initiative)
   for more information on the ABI Compatibility Initiative.
 
-* `HDF5`, `NetCDF`, `NetCDF-Fortran`, `NetCDF-C++` and `pFUnit` are also slightly
-   older than in the current MO `LFRic` build system, whereas `YAXT` is the same version.
+* `HDF5`, `NetCDF`, `NetCDF-Fortran`, `NetCDF-C++` and `pFUnit` are also
+   slightly older than in the current MO `LFRic` build system, whereas `YAXT` is
+   the same version. To install the same versions of the above packages that are
+   currently used by LFRic, please use the alternative install script (dynamic
+   linking example)
+   [install_lfric_env_current.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env_current.sh).
 
 * [`XIOS`](https://forge.ipsl.jussieu.fr/ioserver) is a tricky beast to build as
   not every revision/release will work with every compiler and/or every compiler release.
@@ -194,12 +202,14 @@ section.
 
 * Here we used the same `PSyclone` release (1.7.0) that is used by the current
  `LFRic` trunk (as of 4 December 2019), built with Python 2 environment (the move
-  to Python 3 and newest `PSyclone` is under way????). Not every `PSyclone` release
-  will work with every `LFRic` trunk revision. The `LFRic` - `PSyclone` compatibility
-  table is give in this
+  to Python 3 and the newest `PSyclone` is under way). Not every `PSyclone`
+  release will work with every `LFRic` trunk revision. The `LFRic` - `PSyclone`
+  compatibility table is give in this
   [`LFRic` wiki (requires login)](https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility).
 
 ## Tips & tricks
+
+### Libraries
 
 * The container tool [Sarus](https://user.cscs.ch/tools/containers/sarus) supported
   on Piz Daint can add the proper hook to the host MPI library if the command
@@ -228,6 +238,14 @@ section.
   the Dockerfile. For more details, please check
   [this link](https://stackoverflow.com/questions/23112515/mpich2-gethostbyname-failed/23118973).
 
+* PSyclone configuration file `psyclone.cfg` can end up in different locations
+  during PSyclone installation. Please see
+  [PSyclone configuration documentation](https://psyclone.readthedocs.io/en/stable/getting_going.html#configuration)
+  for the most common locations. If none of those work, try the good old
+  `find / -name "psyclone.cfg"` search.
+
+### LFRic code
+
 * Checking out the `LFRic` trunk requires access to the MO
   [`LFRic` repository](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic).
 
@@ -247,7 +265,6 @@ section.
   for the build to complete. For this reason we made changes to `Makefile`s
   outside the container and then copied the tarballs into the container.
 
-* By default, running command-line `make` builds `LFRic` with MPI but not OpenMP.
-  To enable `PSyclone` OpenMP optimisations, the environment variable
+* By default, running command-line `make build` builds `LFRic` with MPI but not
+  OpenMP. To enable `PSyclone` OpenMP optimisations, the environment variable
   `LFRIC_TARGET_PLATFORM` was set to `meto-spice` value.
-

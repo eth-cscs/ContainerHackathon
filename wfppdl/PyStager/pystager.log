@@ -1,0 +1,178 @@
+2019-12-05 14:26:43,015:INFO: === PyStager is started === 
+2019-12-05 14:26:43,015:INFO:==== Directory scanner : start ====
+2019-12-05 14:26:43,057:INFO:=== Directory Scanner output ===
+2019-12-05 14:26:43,057:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 14:26:43,057:INFO:Total number of the files in the source directory is: 7
+2019-12-05 14:26:43,057:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 14:26:43,057:INFO:==== Directory scanner : end ====
+2019-12-05 14:26:43,057:INFO:==== Data Structure Builder : start  ====
+2019-12-05 14:26:43,057:INFO:The destination path exists
+2019-12-05 14:26:43,057:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 14:26:43,090:INFO:Folder_number_1 is created 
+2019-12-05 14:26:43,129:INFO:Folder_number_2 is created 
+2019-12-05 14:26:43,129:INFO:==== Data Structure Builder : end  ====
+2019-12-05 14:26:43,129:INFO:==== Load Distribution  : start  ====
+2019-12-05 14:26:43,129:INFO:{1: None, 2: None, 3: None, 4: None, 5: None}
+2019-12-05 14:26:43,129:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:26:43,129:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:26:43,129:INFO:==== Load Distribution  : end  ====
+2019-12-05 14:26:43,130:INFO:==== Master Communication  : start  ====
+2019-12-05 14:26:43,130:WARNING:('Node', '4', 'is idle')
+2019-12-05 14:26:43,130:WARNING:('Node', '5', 'is idle')
+2019-12-05 14:26:43,136:WARNING:('Node', '3', 'is idle')
+2019-12-05 14:27:12,783:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 14:27:13,822:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 14:27:13,823:DEBUG:30.8079459667
+2019-12-05 14:27:13,823:INFO:==== PyStager is done ====
+2019-12-05 14:27:13,823:INFO:exit status : 0
+2019-12-05 14:30:49,322:INFO: === PyStager is started === 
+2019-12-05 14:30:49,328:INFO:==== Directory scanner : start ====
+2019-12-05 14:30:49,335:INFO:=== Directory Scanner output ===
+2019-12-05 14:30:49,335:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 14:30:49,336:INFO:Total number of the files in the source directory is: 7
+2019-12-05 14:30:49,336:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 14:30:49,336:INFO:==== Directory scanner : end ====
+2019-12-05 14:30:49,336:INFO:==== Data Structure Builder : start  ====
+2019-12-05 14:30:49,336:INFO:The destination path exists
+2019-12-05 14:30:49,336:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 14:30:49,350:INFO:Folder_number_1 is created 
+2019-12-05 14:30:49,353:INFO:Folder_number_2 is created 
+2019-12-05 14:30:49,353:INFO:==== Data Structure Builder : end  ====
+2019-12-05 14:30:49,354:INFO:==== Load Distribution  : start  ====
+2019-12-05 14:30:49,354:INFO:{1: None, 2: None, 3: None, 4: None, 5: None}
+2019-12-05 14:30:49,354:INFO:['Folder_number_1', 'Folder_number_2']
+2019-12-05 14:30:49,354:INFO:2
+2019-12-05 14:30:49,354:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:30:49,354:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:30:49,354:INFO:==== Load Distribution  : end  ====
+2019-12-05 14:30:49,354:INFO:==== Master Communication  : start  ====
+2019-12-05 14:30:49,354:WARNING:('Node', '3', 'is idle')
+2019-12-05 14:30:49,354:WARNING:('Node', '5', 'is idle')
+2019-12-05 14:30:49,355:WARNING:('Node', '4', 'is idle')
+2019-12-05 14:31:16,288:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 14:31:16,625:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 14:31:16,625:DEBUG:27.3032999039
+2019-12-05 14:31:16,625:INFO:==== PyStager is done ====
+2019-12-05 14:31:16,625:INFO:exit status : 0
+2019-12-05 14:34:23,886:INFO: === PyStager is started === 
+2019-12-05 14:34:23,886:INFO:==== Directory scanner : start ====
+2019-12-05 14:34:23,909:INFO:=== Directory Scanner output ===
+2019-12-05 14:34:23,910:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 14:34:23,910:INFO:Total number of the files in the source directory is: 7
+2019-12-05 14:34:23,910:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 14:34:23,910:INFO:==== Directory scanner : end ====
+2019-12-05 14:34:23,910:INFO:==== Data Structure Builder : start  ====
+2019-12-05 14:34:23,910:INFO:The destination path exists
+2019-12-05 14:34:23,910:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 14:34:23,957:INFO:Folder_number_1 is created 
+2019-12-05 14:34:24,017:INFO:Folder_number_2 is created 
+2019-12-05 14:34:24,017:INFO:==== Data Structure Builder : end  ====
+2019-12-05 14:34:24,017:INFO:==== Load Distribution  : start  ====
+2019-12-05 14:34:24,017:INFO:The follwoing is in the load Balancer 
+2019-12-05 14:34:24,017:INFO:{1: None, 2: None, 3: None, 4: None, 5: None}
+2019-12-05 14:34:24,017:INFO:['Folder_number_1', 'Folder_number_2']
+2019-12-05 14:34:24,017:INFO:2
+2019-12-05 14:34:24,018:INFO:7
+2019-12-05 14:34:24,018:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:34:24,018:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:34:24,018:INFO:==== Load Distribution  : end  ====
+2019-12-05 14:34:24,018:INFO:==== Master Communication  : start  ====
+2019-12-05 14:34:24,021:WARNING:('Node', '4', 'is idle')
+2019-12-05 14:34:24,027:WARNING:('Node', '3', 'is idle')
+2019-12-05 14:34:24,060:WARNING:('Node', '5', 'is idle')
+2019-12-05 14:34:50,471:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 14:34:50,472:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 14:34:50,472:DEBUG:26.5866532326
+2019-12-05 14:34:50,472:INFO:==== PyStager is done ====
+2019-12-05 14:34:50,473:INFO:exit status : 0
+2019-12-05 14:42:33,574:INFO: === PyStager is started === 
+2019-12-05 14:42:33,574:INFO:==== Directory scanner : start ====
+2019-12-05 14:42:33,617:INFO:=== Directory Scanner output ===
+2019-12-05 14:42:33,617:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 14:42:33,618:INFO:Total number of the files in the source directory is: 7
+2019-12-05 14:42:33,618:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 14:42:33,618:INFO:==== Directory scanner : end ====
+2019-12-05 14:42:33,618:INFO:==== Data Structure Builder : start  ====
+2019-12-05 14:42:33,618:INFO:The destination path exists
+2019-12-05 14:42:33,618:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 14:42:33,637:INFO:Folder_number_1 is created 
+2019-12-05 14:42:33,677:INFO:Folder_number_2 is created 
+2019-12-05 14:42:33,677:INFO:==== Data Structure Builder : end  ====
+2019-12-05 14:42:33,677:INFO:==== Load Distribution  : start  ====
+2019-12-05 14:42:33,677:INFO:The follwoing is in the load Balancer 
+2019-12-05 14:42:33,677:INFO:{1: None, 2: None, 3: None, 4: None, 5: None}
+2019-12-05 14:42:33,678:INFO:['Folder_number_1', 'Folder_number_2']
+2019-12-05 14:42:33,678:INFO:2
+2019-12-05 14:42:33,678:INFO:7
+2019-12-05 14:42:33,678:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:42:33,678:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:42:33,678:INFO:==== Load Distribution  : end  ====
+2019-12-05 14:42:33,678:INFO:==== Master Communication  : start  ====
+2019-12-05 14:42:33,678:WARNING:('Node', '5', 'is idle')
+2019-12-05 14:42:33,678:WARNING:('Node', '3', 'is idle')
+2019-12-05 14:42:33,692:WARNING:('Node', '4', 'is idle')
+2019-12-05 14:43:02,276:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 14:43:05,644:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 14:43:05,644:DEBUG:32.0699839592
+2019-12-05 14:43:05,644:INFO:==== PyStager is done ====
+2019-12-05 14:43:05,644:INFO:exit status : 0
+2019-12-05 14:49:27,579:INFO: === PyStager is started === 
+2019-12-05 14:49:27,580:INFO:==== Directory scanner : start ====
+2019-12-05 14:49:27,621:INFO:=== Directory Scanner output ===
+2019-12-05 14:49:27,621:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 14:49:27,621:INFO:Total number of the files in the source directory is: 7
+2019-12-05 14:49:27,622:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 14:49:27,622:INFO:==== Directory scanner : end ====
+2019-12-05 14:49:27,622:INFO:==== Data Structure Builder : start  ====
+2019-12-05 14:49:27,622:INFO:The destination path exists
+2019-12-05 14:49:27,622:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 14:49:27,649:INFO:Folder_number_1 is created 
+2019-12-05 14:49:27,677:INFO:Folder_number_2 is created 
+2019-12-05 14:49:27,677:INFO:==== Data Structure Builder : end  ====
+2019-12-05 14:49:27,677:INFO:==== Load Distribution  : start  ====
+2019-12-05 14:49:27,677:INFO:The follwoing is in the load Balancer 
+2019-12-05 14:49:27,677:INFO:{1: None, 2: None, 3: None, 4: None, 5: None}
+2019-12-05 14:49:27,677:INFO:['Folder_number_1', 'Folder_number_2']
+2019-12-05 14:49:27,678:INFO:2
+2019-12-05 14:49:27,678:INFO:7
+2019-12-05 14:49:27,678:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:49:27,678:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None, 4: None, 5: None}
+2019-12-05 14:49:27,678:INFO:==== Load Distribution  : end  ====
+2019-12-05 14:49:27,678:INFO:==== Master Communication  : start  ====
+2019-12-05 14:49:27,678:WARNING:('Node', '3', 'is idle')
+2019-12-05 14:49:27,678:WARNING:('Node', '5', 'is idle')
+2019-12-05 14:49:27,692:WARNING:('Node', '4', 'is idle')
+2019-12-05 14:49:56,252:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 14:49:56,441:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 14:49:56,448:DEBUG:28.867759943
+2019-12-05 14:49:56,450:INFO:==== PyStager is done ====
+2019-12-05 14:49:56,452:INFO:exit status : 0
+2019-12-05 15:09:05,660:INFO: === PyStager is started === 
+2019-12-05 15:09:05,660:INFO:==== Directory scanner : start ====
+2019-12-05 15:09:05,670:INFO:=== Directory Scanner output ===
+2019-12-05 15:09:05,670:INFO:Total size of the source directory is:6.0Gb.
+2019-12-05 15:09:05,670:INFO:Total number of the files in the source directory is: 7
+2019-12-05 15:09:05,671:INFO:Total number of the directories  in the source directory is: 2
+2019-12-05 15:09:05,671:INFO:==== Directory scanner : end ====
+2019-12-05 15:09:05,671:INFO:==== Data Structure Builder : start  ====
+2019-12-05 15:09:05,671:INFO:The destination path exists
+2019-12-05 15:09:05,671:INFO:Load Level = 0 : Data Sctructure will be build
+2019-12-05 15:09:05,684:INFO:Folder_number_1 is created 
+2019-12-05 15:09:05,701:INFO:Folder_number_2 is created 
+2019-12-05 15:09:05,701:INFO:==== Data Structure Builder : end  ====
+2019-12-05 15:09:05,701:INFO:==== Load Distribution  : start  ====
+2019-12-05 15:09:05,702:INFO:The follwoing is in the load Balancer 
+2019-12-05 15:09:05,702:INFO:{1: None, 2: None, 3: None}
+2019-12-05 15:09:05,702:INFO:['Folder_number_1', 'Folder_number_2']
+2019-12-05 15:09:05,702:INFO:2
+2019-12-05 15:09:05,702:INFO:7
+2019-12-05 15:09:05,702:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None}
+2019-12-05 15:09:05,702:INFO:{1: 'Folder_number_1', 2: 'Folder_number_2', 3: None}
+2019-12-05 15:09:05,702:INFO:==== Load Distribution  : end  ====
+2019-12-05 15:09:05,702:INFO:==== Master Communication  : start  ====
+2019-12-05 15:09:05,703:WARNING:('Node', '3', 'is idle')
+2019-12-05 15:09:31,003:INFO:('Node:', '1', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_1/ /home/amirpasha/Move_test/Receiver/Folder_number_1', '\r\n')
+2019-12-05 15:09:33,656:INFO:('Node:', '2', 'finished :', 'rsync -r /home/amirpasha/Move_test/Source/Folder_number_2/ /home/amirpasha/Move_test/Receiver/Folder_number_2', '\r\n')
+2019-12-05 15:09:33,657:DEBUG:27.9968380928
+2019-12-05 15:09:33,657:INFO:==== PyStager is done ====
+2019-12-05 15:09:33,657:INFO:exit status : 0

@@ -296,9 +296,9 @@ mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
             <th colspan=2>C192, 6 nodes, 6 MPI p.n.</th>
         </tr>
         <tr>
-            <th colspan=1>`LFRic` timer</th>
+            <th colspan=1>LFRic timer</th>
             <th colspan=1>Slurm time</th>
-            <th colspan=1>`LFRic` timer</th>
+            <th colspan=1>LFRic timer</th>
             <th colspan=1>Slurm time</th>
         </tr>
     </thead>
@@ -307,29 +307,26 @@ mesh resolutions, number of nodes, MPI tasks and OpenMP threads.
             <th>1</th>
             <th>194.59 s</th>
             <th>00:03:33 (213 s)</th>
-            <th>128.43 s</th>
-            <th>00:02:57 (177 s)</th>
+            <th>801.52 s</th>
+            <th>00:13:40 (204 s)</th>
         </tr>
         <tr>
             <th>2</th>
-            <th>801.52 s</th>
-            <th>00:13:40 (204 s)</th>
+            <th>128.43 s</th>
+            <th>00:02:57 (177 s)</th>
             <th>517.95 s</th>
             <th>00:08:57 (537 s)</th>
         </tr>
     </tbody>
 </table>
 
-
-
-
 `C24` mesh configuration were run on 1 MPI task and on 1, 2 and 4 OpenMP threads:
 
-| OMP threads  | `LFRic` timer | Slurm time       |
-|--------------|---------------|------------------|
-|       1      |  394.76 s     | 00:06:58 (418 s) |
-|       2      |  231.69 s     | 00:04:32 (272 s) |
-|       4      |  153.93 s     | 00:03:14 (194 s) |
+| OMP threads  | LFRic timer | Slurm time       |
+|--------------|-------------|------------------|
+|       1      |  394.76 s   | 00:06:58 (418 s) |
+|       2      |  231.69 s   | 00:04:32 (272 s) |
+|       4      |  153.93 s   | 00:03:14 (194 s) |
 
 ## LFRic Gravity Wave benchmark
 

@@ -97,7 +97,7 @@ weather and climate prediction system. The programme will coordinate this
 exciting, challenging, and extensive work, targeting the supercomputers that
 are envisaged becoming operational in the middle of the next decade.
 
-**References**
+## References
 
 - Adams SV, Ford RW, Hambley M, Hobson JM, Kavcic I, Maynard CM, Melvin T,
   Mueller EH, Mullerworth S, Porter AR, Rezny M, Shipway BJ and Wong R (2019):

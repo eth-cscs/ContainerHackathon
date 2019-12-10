@@ -2,6 +2,8 @@
 
 ## LFRic Gungho benchmark
 
+### Running with Sarus
+
 After creating the Docker image of the `LFRic` Gungho benchmark, you load it with
 `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a
 template for running the benchmark:
@@ -24,6 +26,8 @@ srun sarus run --mount=type=bind,source=$PWD/input/gungho,destination=/usr/local
                bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gungho ./gungho_configuration.nml
 ```
 
+### Inputs
+
 The local folder `input/gungho` is a copy of the folder
 `LFRIC_trunk/gungho/example` and contains:
 
@@ -42,6 +46,14 @@ All files are available in the
 [Gungho input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz)
 on this repository.
 
+To produce the mesh files and related namelists required for the Gungho higher
+resolution tests below (`C48`, `C96` and `C192` mesh configurations), please
+follow the instructions in the
+[*LFRic mech generation*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/MeshGeneration.md)
+section.
+
+### Outputs
+
 The Gungho application will produce a single text output for a serial run
 (single MPI task) or `PET**.gungho.Log` outputs for multiple MPI tasks, as well
 as checksums stored in `gungho-checksum.txt` output. Depending on the `&io`
@@ -56,6 +68,8 @@ namelist's settings, it will also produce diagnostic outputs such as
 * `XIOS` client output and error logs (`xios_client.out` and `xios_client.err`
   for a serial run/single MPI task; `xios_client_**.out` and `xios_client_**.err`
   for multiple MPI tasks) if `use_xios_io` flag is set to `.true.`.
+
+### Results
 
 Below are times for completing the Gungho benchmark on Cray XC50 with different
 mesh resolutions, number of nodes, MPI tasks and OpenMP threads. The times are
@@ -182,6 +196,8 @@ run with 1 MPI task and on 1, 2 and 4 OpenMP threads, respectively:
 
 ## LFRic Gravity Wave benchmark
 
+### Running with Sarus
+
 After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load
 it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used
 as a template for running the Gravity Wave benchmark:
@@ -204,6 +220,8 @@ srun sarus run \
      bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && gravity_wave ./gravity_wave_configuration.nml"
 ```
 
+### Inputs
+
 The local folder `input/gwave` contains the namelist `gravity_wave_configuration.nml`
 and the mesh file `mesh24.nc`: both files are available in the
 [Gravity Wave input archive](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gwave.tar.gz)
@@ -215,6 +233,8 @@ present in the `LFRic` repository: `mesh12.nc`, `mesh6.nc` and `mesh3.nc` (for
 the multigrid preconditioner) and `iodef.xml` (parallel IO). They are not
 present in the `input/gwave` folder as neither `l_multigrid` nor `use_xios_io`
 flags were set to `.true.` for the Piz Daint run.
+
+### Outputs and results
 
 The Gravity Wave application will produce outputs similar to the Gungho
 application depending on the namelists' settings.

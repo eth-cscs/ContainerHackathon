@@ -20,5 +20,7 @@ To check out the LFRic code, please
 
 To cheeck out LFRic code, please use
 
-# Compiling and Running LFRic
+* Checking out the `LFRic` trunk requires access to the MO
+  [`LFRic` repository](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic).
 
+# Compiling and Running LFRic

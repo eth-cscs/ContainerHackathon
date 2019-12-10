@@ -246,9 +246,6 @@ section.
 
 ### LFRic code
 
-* Checking out the `LFRic` trunk requires access to the MO
-  [`LFRic` repository](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic).
-
 * Once the `LFRic` trunk is checked out, the `Makefile`s of  tested Gungho and
   Gravity Wave applications needed to be modified from
   ```
@@ -267,4 +264,4 @@ section.
 
 * By default, running command-line `make build` builds `LFRic` with MPI but not
   OpenMP. To enable `PSyclone` OpenMP optimisations, the environment variable
-  `LFRIC_TARGET_PLATFORM` was set to `meto-spice` value.
+  `LFRIC_TARGET_PLATFORM` was set to `meto-spice` value for the Gungho benchmark.

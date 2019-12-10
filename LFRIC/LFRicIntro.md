@@ -1,5 +1,8 @@
 # Introduction to LFRIC
 
+_**Note**: From the
+[Met Office LFRic modelling approach](https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric)_
+
 The Unified Model uses a latitude-longitude coordinate system to create a mesh
 of points covering Earth's surface. Numerical solutions to Newton's laws
 applied to a gas then predict the weather and climate at each of those points.
@@ -103,5 +106,4 @@ are envisaged becoming operational in the middle of the next decade.
   Mueller EH, Mullerworth S, Porter AR, Rezny M, Shipway BJ and Wong R (2019):
   [LFRic: Meeting the challenges of scalability and performance portability in
   Weather and Climate models.](https://doi.org/10.1016/j.jpdc.2019.02.007) Journal of Parallel and Distributed Computing.
-* [MO Research News, May 2019](https://www.metoffice.gov.uk/research/news/2019/gungho-and-lfric)
-* [MO LFRic Modelling approach](https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric)
+* [Met Office research news, May 2019](https://www.metoffice.gov.uk/research/news/2019/gungho-and-lfric)

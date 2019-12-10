@@ -34,11 +34,11 @@ Instructions on building and runing `LFRic` in two container platforms,
 
 For more information on building the `LFRic` Docker container please contact
 [Iva Kavcic, Met Office](mailto:iva.kavcic@metoffice.gov.uk) and
-[@lucamar, CSCS](https://github.com/lucamar) (mentor).
+[Luca Marsella, CSCS](https://github.com/lucamar) (mentor).
 
 For more information on building the `LFRic` Singularity container please contact
 [Simon Wilson, NCAS](mailto:simon.wilson@ncas.ac.uk) and
-[@lucamar, CSCS](https://github.com/lucamar) (mentor).
+[Luca Marsella, CSCS](https://github.com/lucamar) (mentor).
 
 ## LFRic repository and wiki
 

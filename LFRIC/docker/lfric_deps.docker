@@ -1,0 +1,31 @@
+#################################################################################
+# LFRic environment: Configures, builds and installs the LFRic software stack
+#       with the system GCC compiler (version 7.4.0 for Ubuntu 18.04)
+#################################################################################
+#
+FROM ubuntu:18.04
+#
+RUN apt-get update \
+ && apt-get install -y build-essential gcc g++ gfortran make libtool python \
+ python-pip python-setuptools subversion cmake git m4 zlib1g-dev curl libcurl4 \
+ libcurl4-openssl-dev automake libtool-bin pkg-config doxygen \
+ libtypes-uri-perl liburi-perl \
+ wget --no-install-recommends
+#
+# Define home and working directories
+ENV HOME /usr/local/src
+WORKDIR /usr/local/src
+#
+# Copy installation scripts inside the container:
+# 1) LFRic installation script without the XIOS,
+COPY install_lfric_env.sh .
+# 2) Installation  script for XIOS.
+COPY install_xios_env.sh .
+#
+# Build LFRic environment:
+RUN chmod 755 install_lfric_env.sh \
+ && install_xios_env.sh \
+# 1) All dependencies except XIOS,
+ && ./install_lfric_env.sh \
+# 2) And XIOS.
+ && ./install_xios_env.sh

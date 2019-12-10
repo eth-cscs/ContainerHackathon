@@ -1,22 +1,118 @@
-# Introduction to LFRIC
+# Containerisation of LFRic
 
-The Unified Model uses a latitude-longitude coordinate system to create a mesh of points covering Earth's surface. Numerical solutions to Newton's laws applied to a gas then predict the weather and climate at each of those points. In our current operational weather forecast model, those points are 10km apart in the North-South direction. The convergence of the meridians of the latitude-longitude system means that just next to the North and South poles those points are little more than 10m apart in the East-West direction, a factor of 1000 smaller than the separation in the North-South direction. This presents a huge challenge to solving the equations efficiently: many more calculations have to be done than would otherwise be the case because of this clustering of points near the poles; and these calculations require a lot of data to be moved about in the computer's memory which, on the massive supercomputers that are used today for weather and climate prediction, costs time.
+## LFRic and PSyclone: A quick overview
 
-In the future, unless we do something about it, this problem will get increasingly worse for two reasons. The first is that to increase the detail and accuracy of our weather and climate forecasts we want to continue to reduce the spacing of the mesh points. This will increase the clustering of points near the poles. For example, if we reduced the North-South spacing to 1km then the East-West spacing near the poles would reduce to around 10cm! The second is that for the next generation of supercomputers to deliver the required increase in speed, rather than having faster processors they will have many more core processing units. There may well be 10 or a 100 times more cores but each of them will only have a relatively small amount of memory. This means that moving memory about will be even more of a hindrance to achieving computing speed than it currently is.
+`LFRic` is the new weather and climate modelling system being developed by the
+UK Met Office to replace the existing Unified Model (UM) in preparation for
+exascale computing in the 2020s. `LFRic` uses the GungHo dynamical core and runs
+on a semi-structured cubed-sphere mesh.
 
-## GungHo - rising to that challenge
-Recognizing this problem, in 2011 the Met Office initiated a project jointly with the Natural Environment Research Council (NERC) and the Science and Technology Facilities Council (STFC) to redesign the way that the Unified Model solves Newton's laws (the part of the model that is referred to as the dynamical core). The project was called GungHo and ran for 5 years and involved natural and computational scientists from the Met Office, the universities of Bath, Exeter, Leeds, Manchester, Reading, Warwick, Imperial College and STFC's Hartree Centre.
+The design of the supporting infrastructure follows object-oriented principles
+to facilitate modularity and the use of external libraries. One of the guiding
+design principles, imposed to promote performance portability, is
+“separation of concerns” between the science code and parallel code. An
+application called `PSyclone`, developed at the STFC Hartree Centre, can generate
+the parallel code enabling deployment of a single source science code onto
+different machine architectures.
 
-The challenge of the project was to design a dynamical core that retains the advantages of the current one but that is significantly more efficient on future supercomputer architectures. There were three principal recommendations of the project. The first is to change from using the latitude-longitude mesh to what is called a cubed-sphere mesh. This can be thought of as a Rubik's cube made of rubber that has been inflated to fill a sphere. The second is to use an alternative numerical method to solve the equations so that at least the same level of accuracy is retained on the new mesh. This involves changing from what is termed a finite-difference method to a mixed finite-element method. The third is to implement what is referred to as the "separation of concerns". This approach to designing a model is a critical aspect to future-proofing the design, i.e. making the design as independent as possible of the details of any specific supercomputer whilst still being able to optimize the model for a specific supercomputer. It does this by separating the natural science aspects (for example, how Newton's equations are solved) from the technical implementation (for example, how data is moved about within a computer's memory). A key element in achieving this, that GungHo recommended, is to use automatic code generation.
+`PSyclone` is a domain-specific compiler and source-to-source translator developed
+for use in finite element, finite volume and finite difference codes. Using the
+information from a supported API, `PSyclone` generates code exploiting different
+parallel programming models.
 
-## LFRic – realising L F Richardson’s fantasy 100 years on
-To implement these changes to deliver a modelling system that is fit for future computers requires the development of a radically new software infrastructure to replace that of the Unified Model. Thus the LFRic project was born. This is pronounced elfrick and was chosen in recognition of Lewis Fry Richardson and his vision of how to make a weather forecast. His method is based on solving essentially the same equations as we use today and by quite similar methods. But, being some decades ahead of when electronic computers were invented, there was no practical way to solve the equations fast enough for the result to be of any practical use. Richardson's fantasy for how to achieve this was to solve the equations by coordinating the efforts of thousands of human processors, each one working on their own small area of Earth's atmosphere - an approach remarkably similar to how we use the thousands of processors within a modern supercomputer. Richardson eloquently described his fantasy in his book "Weather Prediction by Numerical Process" (Cambridge University Press, 1922; see also "Richardson's Fantastic Forecast Factory" by Peter Lynch in Weather January 2016 71:1).
+More detailed information about `LFRic` and further references can be found in
+[*Introduction to LFRic*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicIntro.md) section.
 
-LFRic continues the formal collaboration with STFC that was established as part of GungHo. In particular STFC have developed the application called PSyclone which auto-generates parallel code used by LFRic. The project also benefits from the continued engagement of the GungHo partners via the NERC funded GungHo Network. Additionally, it is beginning to engage across the whole of the UM Partnership.
+## LFRic containers
 
-## Exascale
-The term used to describe the next generation of supercomputer is “exascale” from their target speed of an exaflop. This means being able to make a billion billion calculations per second. With this speed of computing comes a similarly staggering amount of data that will challenge traditional methods of data management.
+Instructions on building and runing `LFRic` in two container platforms,
+[Docker CE](https://docs.docker.com/install/) and
+[Singularity](https://sylabs.io/docs/), can be found following the links below:
 
-Although the dynamical core is perhaps the part of the system most impacted by the challenges of exascale computers, it is by no means the only one. Others range from the data assimilation system that processes observations, through the ocean and chemistry models, to the systems that process the forecast data to create meaningful products for our customers. The Met Office is therefore spinning up the Exascale Programme to consider all aspects of the end-to-end weather and climate prediction system. The programme will coordinate this exciting, challenging, and extensive work, targeting the supercomputers that are envisaged becoming operational in the middle of the next decade.
+* [`LFRic` Docker container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md);
+* [`LFRic` Singularity container](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/singularity/README.md).
 
-Read more on https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric
+For more information on building the `LFRic` Docker container please contact
+[Iva Kavcic, Met Office](mailto:iva.kavcic@metoffice.gov.uk) and
+[@lucamar, CSCS](https://github.com/lucamar) (mentor).
+
+For more information on building the `LFRic` Singularity container please contact
+[Simon Wilson, NCAS](mailto:simon.wilson@ncas.ac.uk) and
+[@lucamar, CSCS](https://github.com/lucamar) (mentor).
+
+## LFRic repository and wiki
+
+The `LFRic` repository and the associated wiki are hosted at the Met Office
+Science Repository Service [(MOSRS)](https://code.metoffice.gov.uk/trac/home).
+The code is BSD-licensed, however browsing the
+[`LFRic` wiki](https://code.metoffice.gov.uk/trac/lfric/wiki) and
+[code repository](https://code.metoffice.gov.uk/trac/lfric/browser) requires
+login access to MOSRS. Please contact the `LFRic` team manager,
+[Steve Mullerworth](mailto:steve.mullerworth@metoffice.gov.uk), to be granted
+access to the repository.
+
+Once the access has been granted the `LFRic` trunk can be checked out using
+[Subversion](https://subversion.apache.org/) or
+[FCM](https://metomi.github.io/fcm/doc/) version control systems. `SVN` is
+recommended for checking out the code for runs only as it is easier to install.
+
+### LFRic code structure
+
+The current `LFRic` trunk
+[(revision 21509)](https://code.metoffice.gov.uk/trac/lfric/browser/LFRic/trunk?rev=21509)
+is structured as follows:
+
+* `bin` - `Rose` executables;
+
+* `extra` - Utilities (e.g.job submission scripts);
+
+* `GPL` - [`Rose`](https://github.com/metomi/rose/) source used in `LFRic`;
+
+* `gungho` - Gungho dynamical core (one of the main science applications);
+
+* `infrastructure` - `LFRic` infrastructure supporting science applications;
+
+* `jules` - Interface to the MO [JULES land surface model](https://www.metoffice.gov.uk/research/approach/collaboration/jwcrp/jules);
+
+* `lfric_atm` - `LFRic` atmospheric model (Gungho dynamical core, UM Physics,
+                JULES and SOCRATES);
+
+* `mesh_tools` - Mesh generation tools;
+
+* `miniapps` - "Standalone" science and infrastructure applications (e.g.
+                Gravity Wave application);
+
+* `socrates` - Interface to the MO radiative transfer ("Suite Of Community
+               RAdiative Transfer codes") model;
+
+* `um_physics` - Interface to the MO UM Physics parameterisation schemes.
+
+## PSyclone repository and wiki
+
+Both [`PSyclone`](https://github.com/stfc/PSyclone) and the
+[Fortran parser](https://github.com/stfc/fparser) it uses are open source and
+hosted on GitHub.
+
+Wikis are also hosted on GitHub:
+
+* [`PSyclone` wiki](https://github.com/stfc/PSyclone/wiki);
+* [`fparser` wiki](https://github.com/stfc/fparser/wiki).
+
+The documentation is hosted on [Read the Docs](https://readthedocs.org/):
+
+* [`PSyclone` documentation](https://psyclone.readthedocs.io/en/stable/);
+* [`fparser` documentation](https://fparser.readthedocs.io/en/latest/);
+
+or `PSyclone` and `fparser` repositories for functionality merged to master but
+not yet part of an official release.
+
+### PSyclone in LFRic
+
+`LFRic` wiki hosts pages on the use of `PSyclone` in `LFRic`, starting with the
+[`PSyclone` in `LFRic` wiki](https://code.metoffice.gov.uk/trac/lfric/wiki/PSycloneTool).
+
+As mentioned in the
+[*LFRic Docker container*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/README.md)
+section, not every `PSyclone` release works with every `LFRic` trunk revision. The `LFRic` - `PSyclone`
+compatibility table is give in this
+[`LFRic` wiki (requires login)](https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility).

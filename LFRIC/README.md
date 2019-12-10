@@ -104,7 +104,7 @@ The documentation is hosted on [Read the Docs](https://readthedocs.org/):
 * [`fparser` documentation](https://fparser.readthedocs.io/en/latest/);
 
 or `PSyclone` and `fparser` repositories for functionality merged to master but
-not yet part of an official releases.
+not yet part of an official release.
 
 ### PSyclone in LFRic
 

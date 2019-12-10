@@ -1,16 +1,14 @@
 # How to build a Docker container of LFRic
 
-_**Note**: For more info please contact [Iva Kavcic](mailto:iva.kavcic@metoffice.gov.uk)
-and [@lucamar](https://github.com/lucamar) (mentor)._
-
 ## Gungho benchmark
 
-As outlined in
-[*LFRic and PSyclone repositories and code*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicPSycloneRepoCode.md)
-section, the LFRic trunk is divided into several applications. This section
+As outlined in the
+[*LFRic main section*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/README.md)
+the LFRic trunk is divided into several applications. This section
 outlines how to build a container benchmark of the Gungho application.
 
 A template Dockerfile to build the `LFRic` Gungho container is available below:
+
 ```
 #################################################################################
 # LFRic environment: Builds and runs LFRic Gungho benchmark with PSyclone OMP.
@@ -86,9 +84,11 @@ docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f lfric_deps.docker 
 ```
 
 The scripts that build the libraries are also provided in the repository:
-- [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh)
+
+* [install_lfric_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh)
   sets up the environment and builds the dependencies of `LFRic` without the `XIOS`;
-- [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh)
+
+* [install_xios_env.sh](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh)
   creates architecture files needed to build `XIOS` and builds `XIOS`.
 
 Instructions on how to run the LFRic Gungho container with Sarus on Piz Daint and
@@ -100,10 +100,11 @@ section.
 
 This section outlines how to build a container benchmark of the Gravity Wave
 application, one of the LFRic miniapps (see
-[*LFRic and PSyclone repositories and code*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/LFRicPSycloneRepoCode.md)
+[*LFRic main section*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/README.md)
 section for more details).
 
 A template Dockerfile to build the `LFRic` Gravity Wave container is available below:
+
 ```
 #################################################################################
 # LFRic environment: Builds and runs LFRic Gravity Wave benchmark.
@@ -218,11 +219,13 @@ section.
   `ldconfig` would not be able to find the library in the custom path within the
   container. Therefore, before running `ldconfig` we added the path of `MPICH` to
   `/etc/ld.so.conf.d/mpich.conf` as in the example below:
+
   ```
   # Adds config file for MPICH for Sarus on Piz Daint
   RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
    && ldconfig
   ```
+
   Please look [here](https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path)
   for more information.
 
@@ -248,17 +251,21 @@ section.
 
 * Once the `LFRic` trunk is checked out, the `Makefile`s of  tested Gungho and
   Gravity Wave applications needed to be modified from
+
   ```
   export EXTERNAL_DYNAMIC_LIBRARIES = yaxt yaxt_c netcdff netcdf hdf5 \
                                       $(CXX_RUNTIME_LIBRARY)
   export EXTERNAL_STATIC_LIBRARIES = xios
   ```
+
   to
+
   ```
   export EXTERNAL_DYNAMIC_LIBRARIES =
   export EXTERNAL_STATIC_LIBRARIES = yaxt yaxt_c xios netcdff netcdf hdf5_hl \
                                      hdf5 z :libstdc++.a
   ```
+
   for the build to complete. For this reason we made changes to `Makefile`s
   outside the container and then copied the tarballs into the container.
 

@@ -1,8 +1,5 @@
 # How to build a Singularity container of LFRIC
 
-_**Note**: For more info please contact [Simon Wilson](mailto:simon.wilson@ncas.ac.uk)
-and [@lucamar](https://github.com/lucamar) (mentor)._
-
 This is built on previous work using Singularity to create a LFRic build system.
 LFRic has a large dependency tree and is currently being developed by anumber of
 users on a variety of systems, from laptops to HPCs.
@@ -65,6 +62,7 @@ singularity shell -B /opt/intel:/opt/intel lfric_usr.sif #Start singularity with
 cd trunk/gungho # or to the downloaded location.
 make build #Build the main exec.
 ```
+
 Log out of the container. The executable built inside the container can be run
 outside the container using the standard Slurm submission system.
 

@@ -7,6 +7,7 @@
 After creating the Docker image of the `LFRic` Gungho benchmark, you load it with
 `sarus` and run it on Piz Daint. The Slurm batch script below can be used as a
 template for running the benchmark:
+
 ```
 #!/bin/bash -l
 #SBATCH --job-name=job_name
@@ -31,11 +32,13 @@ srun sarus run --mount=type=bind,source=$PWD/input/gungho,destination=/usr/local
 The local folder `input/gungho` is a copy of the folder
 `LFRIC_trunk/gungho/example` and contains:
 
-- Namelist `gungho_configuration.nml`;
-- Four mesh files required for the multigrid preconditioner (`l_multigrid` flag
+* Namelist `gungho_configuration.nml`;
+
+* Four mesh files required for the multigrid preconditioner (`l_multigrid` flag
   set to `.true` in the `&multigrid` namelist) used in Gungho (`mesh24.nc`,
   `mesh12.nc`, `mesh6.nc` and `mesh3.nc`);
-- `iodef.xml` file required for parallel IO.
+
+* `iodef.xml` file required for parallel IO.
 
 The IO file, however is not used as the `use_xios_io` flag in the `&io`
 namelist is set to `.false.`. If no diagnostic output (e.g. plots) are
@@ -49,7 +52,7 @@ on this repository.
 To produce the mesh files and related namelists required for the Gungho higher
 resolution tests below (`C48`, `C96` and `C192` mesh configurations), please
 follow the instructions in the
-[*LFRic mech generation*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/MeshGeneration.md)
+[*LFRic mesh generation*](https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/MeshGeneration.md)
 section.
 
 ### Outputs
@@ -61,10 +64,13 @@ namelist's settings, it will also produce diagnostic outputs such as
 
 * Overall application run times stored in `timer.txt` (set by the
   `subroutine_timers` flag to `.true.`);
+
 * Overall application counter of halo calls stored in `halo_calls_counter.txt`
   (set by the `subroutine_counters` flag to `.true.`);
+
 * Plots of the results (set by the `write_diag` and `diagnostic_frequency`
   options);
+
 * `XIOS` client output and error logs (`xios_client.out` and `xios_client.err`
   for a serial run/single MPI task; `xios_client_**.out` and `xios_client_**.err`
   for multiple MPI tasks) if `use_xios_io` flag is set to `.true.`.
@@ -201,6 +207,7 @@ run with 1 MPI task and on 1, 2 and 4 OpenMP threads, respectively:
 After creating the Docker image of the `LFRic` Gravity Wave benchmark, you load
 it with `sarus` and run it on Piz Daint. The Slurm batch script below can be used
 as a template for running the Gravity Wave benchmark:
+
 ```
 #!/bin/bash -l
 #SBATCH --job-name=lfric-gwave

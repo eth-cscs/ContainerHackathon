@@ -1,0 +1,862 @@
+\documentclass[twoside,a4paper,12pt]{article}
+
+\usepackage{hyperref,listings,xcolor}
+\usepackage{fancyvrb,multirow,caption}
+\usepackage[superscript,biblabel]{cite}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage[affil-it]{authblk}
+
+\hypersetup{
+    colorlinks,
+    citecolor=purple,
+    filecolor=black,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+\setlength\parindent{0pt}
+\setlength{\parskip}{3pt}
+
+\title{Containerisation of LFRic with Docker}
+\author{Iva Kav\v ci\v c, Met Office, UK}
+
+\vspace{-8ex}
+\date{}
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{document}
+
+\maketitle
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{Introduction}\label{introduction}
+
+This report presents work on containerisation of LFRic with Docker during the
+ESiWACE2 project
+\href{https://www.cscs.ch/events/private-events/event-detail/container-hackathon-for-modellers/}
+{``Container Hackathon for Modellers''} in December 2019.
+Section~\ref{lfric_overview} gives an overview of LFRic and its main build dependency,
+PSyclone. Instructions on building and running LFRic in
+\href{https://docs.docker.com/install/}{Docker CE} can be found in
+section~\ref{lfric_docker}. Instructions on how to run the LFRic Gungho
+container with Sarus on Piz Daint and results of the runs are in
+section~\ref{lfric_pizdaint}.
+
+The associated scripts and inputs are hosted in the ``LFRIC'' subdirectory of
+the \href{https://github.com/eth-cscs/ContainerHackathon/tree/master}
+{Container Hackathon GithHub repository}. For more information on building the
+LFRic Docker container please contact
+\href{iva.kavcic@metoffice.gov.uk}{Iva Kav\v ci\v c, Met Office} and
+\href{https://github.com/lucamar}{Luca Marsella, CSCS} (mentor).
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{LFRic and PSyclone:\ A quick overview}\label{lfric_overview}
+
+LFRic~\cite{lfricpaper} is the new weather and climate modelling system being
+developed by the UK Met Office to replace the existing Unified Model (UM) in
+preparation for exascale computing in the 2020s. LFRic uses the
+GungHo~\cite{GungHoDyn} dynamical core and runs on a semi-structured
+cubed-sphere mesh.
+
+The design of the supporting infrastructure follows object-oriented principles
+to facilitate modularity and the use of external libraries~\cite{MOmodel, MOresnews}.
+One of the guiding design principles, imposed to promote performance portability,
+is ``separation of concerns'' between the science code and parallel code.
+An application called PSyclone, developed at the STFC Hartree Centre, can
+generate the parallel code enabling deployment of a single source science code
+onto different machine architectures.
+
+PSyclone is a domain-specific compiler and source-to-source translator developed
+for use in finite element, finite volume and finite difference codes. Using the
+information from a supported API, PSyclone generates code exploiting different
+parallel programming models.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{LFRic repository and wiki}\label{lfric_repo}
+
+The LFRic repository and the associated wiki are hosted at the Met Office
+Science Repository Service \href{https://code.metoffice.gov.uk/trac/home}{(MOSRS)}.
+The code is BSD-licensed, however browsing the
+\href{https://code.metoffice.gov.uk/trac/lfric/wiki}{LFRic wiki} and
+\href{https://code.metoffice.gov.uk/trac/lfric/browser}{code repository}
+requires login access to MOSRS. Please contact the LFRic team manager,
+\href{mailto:steve.mullerworth@metoffice.gov.uk}{Steve Mullerworth},
+to be granted access to the repository.
+
+Once the access has been granted the LFRic trunk can be checked out using
+\href{https://subversion.apache.org/}{Subversion} or
+\href{https://metomi.github.io/fcm/doc/}{FCM} version control systems.
+SVN is recommended for checking out the code for runs only as it is easier
+to install.
+%
+%%%%%%%%%%%%%%%%%%%%
+%
+\subsubsection{LFRic code structure}\label{lfric_code}
+
+The \href{https://code.metoffice.gov.uk/trac/lfric/browser/LFRic/trunk?rev=21509}{LFRic trunk (at revision 21509)}
+is structured as follows:
+
+\begin{itemize}
+\item \texttt{bin} - Rose executables;
+\item \texttt{extra} - Utilities (e.g.\ job submission scripts);
+\item \texttt{GPL} - \href{https://github.com/metomi/rose}{Rose} source used in LFRic;
+\item \texttt{gungho} - Gungho dynamical core (one of the main science applications);
+\item \texttt{infrastructure} - LFRic infrastructure supporting science applications;
+\item \texttt{jules} - Interface to the MO \href{https://www.metoffice.gov.uk/research/approach/collaboration/jwcrp/jules}{JULES land surface model};
+\item \texttt{lfric\_atm} - LFRic atmospheric model (Gungho dynamical core, UM Physics, JULES and SOCRATES);
+\item \texttt{mesh\_tools} - Mesh generation tools;
+\item \texttt{miniapps} - ``Standalone'' science and infrastructure applications (e.g. Gravity Wave application);
+\item \texttt{socrates} - Interface to the MO radiative transfer (``Suite Of Community RAdiative Transfer codes'') model;
+\item \texttt{um\_physics} - Interface to the MO UM Physics parameterisation schemes.
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{PSyclone repository and wiki}\label{psyclone_repo}
+
+Both \href{https://github.com/stfc/PSyclone}{PSyclone} and the
+\href{https://github.com/stfc/fparser}{Fortran parser} it uses are open source
+and hosted on GitHub. Their wikis are also hosted on GitHub:
+
+\begin{itemize}
+\item \href{https://github.com/stfc/PSyclone/wiki}{PSyclone wiki};
+\item \href{https://github.com/stfc/fparser/wiki}{fparser wiki}.
+\end{itemize}
+
+The documentation is hosted on \href{https://readthedocs.org/}{Read the Docs}:
+\begin{itemize}
+\item \href{https://psyclone.readthedocs.io/en/stable/}{PSyclone documentation};
+\item \href{https://fparser.readthedocs.io/en/latest/}{fparser documentation};
+\end{itemize}
+or PSyclone and fparser repositories for functionality merged to master but not
+yet part of an official release.
+%
+%%%%%%%%%%%%%%%%%%%%
+%
+\subsubsection{PSyclone in LFRic}\label{psyclone_lfric}
+
+LFRic wiki hosts pages on the use of PSyclone in LFRic, starting with the
+\href{https://code.metoffice.gov.uk/trac/lfric/wiki/PSycloneTool}{PSyclone in LFRic wiki}.
+As mentioned in section~\ref{lfric_docker}, not every PSyclone release works
+with every LFRic trunk revision. The LFRic--PSyclone compatibility table is
+given in this
+\href{https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility}{LFRic wiki (requires login)}.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{Building LFRic Docker container}\label{lfric_docker}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Gungho benchmark}\label{gungho_benchmark}
+
+As outlined in section~\ref{lfric_repo}, the LFRic trunk is divided into
+several applications. This section outlines how to build a container benchmark
+of the Gungho application.
+
+A template Dockerfile to build the LFRic Gungho container is available below.
+
+\begin{Verbatim}[fontsize=\small]
+#################################################################################
+# LFRic environment: Builds and runs LFRic Gungho benchmark with PSyclone OMP.
+# Prerequisites: LFRic build environment built with the system  GCC compiler
+                 (version 7.4.0) using Docker template 'lfric_deps.docker' and
+                 the relevant installation scripts.
+#################################################################################
+#
+FROM lfric-deps:gnu
+#
+# Define home and working directories
+ENV HOME /usr/local/src
+WORKDIR /usr/local/src
+#
+# Set the compiler environment
+ENV COMP_PACKAGE_DIR $HOME/gnu_env
+# Set the following environment variables
+ENV INSTALL_DIR $COMP_PACKAGE_DIR/usr
+ENV BUILD_DIR $COMP_PACKAGE_DIR/build
+ENV PFUNIT $INSTALL_DIR
+ENV PATH $INSTALL_DIR/bin:$PATH
+ENV FC gfortran
+ENV FPP "cpp -traditional-cpp"
+ENV LDMPI mpif90
+ENV FFLAGS "-I$BUILD_DIR/XIOS/inc -I$INSTALL_DIR/include -I$INSTALL_DIR/mod"
+ENV LDFLAGS "-L$BUILD_DIR/XIOS/lib -L$INSTALL_DIR/lib -L/usr/lib -lstdc++"
+ENV CPPFLAGS "-I$INSTALL_DIR/include -I/usr/include"
+ENV LD_LIBRARY_PATH $INSTALL_DIR/lib:$INSTALL_DIR/lib64:$LD_LIBRARY_PATH
+# Path to PSyclone configuration file
+ENV PSYCLONE_CONFIG /usr/local/share/psyclone/psyclone.cfg
+#
+# Adds config file for MPICH for Sarus on Piz Daint
+RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
+ && ldconfig
+#
+# For most applications one OMP thread is enough (can be set in batch submit script)
+ENV OMP_NUM_THREADS 1
+#
+# Set option to apply OpenMP optimisations with PSyclone
+ENV LFRIC_TARGET_PLATFORM meto-spice
+#
+# Copy LFRic trunk inside the container
+COPY LFRic_trunk.tar .
+# Unpack LFRic trunk
+RUN tar -xf LFRic_trunk.tar \
+# Navigate to "gungho" directory and build application
+ && cd LFRic_trunk/gungho \
+ && make build -j \
+# Navigate to example directory to run the application from
+ && cd example
+#
+# Paths to executables and example directory
+ENV PATH $HOME/LFRic_trunk/gungho/bin:$PATH
+WORKDIR $HOME/LFRic_trunk/gungho/example
+\end{Verbatim}
+
+We have saved the template Dockerfile above as \texttt{lfric\_gungho.docker} and
+we built it with the command below:
+
+\begin{Verbatim}[fontsize=\small]
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f \
+  lfric_gungho.docker -t lfric-gungho:gnu .
+\end{Verbatim}
+
+The template starts the build from the \texttt{lfric-deps:gnu} Docker container
+which contains the libraries needed by the code: MPICH, YAXT, HDF5, NetCDF,
+NetCDF-Fortran, NetCDF-C++, XIOS and pFUnit. This dependency container was built
+from the script
+\href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/lfric_deps.docker}
+{\texttt{lfric\_deps.docker}} by running
+
+\begin{Verbatim}[fontsize=\small]
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f \
+  lfric_deps.docker -t lfric-deps:gnu .
+\end{Verbatim}
+
+The scripts that build the libraries are also provided in the
+\href{https://github.com/eth-cscs/ContainerHackathon/tree/master/LFRIC/docker}
+{Hackathon LFRic Docker repository}:
+\begin{itemize}
+\item \href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh}
+{\texttt{install\_lfric\_env.sh}} sets up the environment and builds the dependencies of
+LFRic without the XIOS;
+\item \href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_xios_env.sh}
+{\texttt{install\_xios\_env.sh}} creates architecture files needed to build XIOS and builds XIOS.
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Gravity Wave benchmark}\label{gwave_benchmark}
+
+This section outlines how to build a container benchmark of the Gravity Wave
+application, one of the LFRic miniapps (see section~\ref{lfric_repo} for more
+details).
+
+A template Dockerfile to build the LFRic Gravity Wave container is available below.
+
+\begin{Verbatim}[fontsize=\small]
+#################################################################################
+# LFRic environment: Builds and runs LFRic Gravity Wave benchmark.
+# Prerequisites: LFRic build environment built with the system  GCC compiler
+                 (version 7.4.0) using Docker template 'lfric_deps.docker' and
+                 the relevant installation scripts.
+#################################################################################
+#
+FROM lfric-deps:gnu
+#
+# Define home and working directories
+ENV HOME /usr/local/src
+WORKDIR /usr/local/src
+#
+# Set the compiler environment
+ENV COMP_PACKAGE_DIR $HOME/gnu_env
+# Set the following environment variables
+ENV INSTALL_DIR $COMP_PACKAGE_DIR/usr
+ENV BUILD_DIR $COMP_PACKAGE_DIR/build
+ENV PFUNIT $INSTALL_DIR
+ENV PATH $INSTALL_DIR/bin:$PATH
+ENV FC gfortran
+ENV FPP "cpp -traditional-cpp"
+ENV LDMPI mpif90
+ENV FFLAGS "-I$BUILD_DIR/XIOS/inc -I$INSTALL_DIR/include -I$INSTALL_DIR/mod"
+ENV LDFLAGS "-L$BUILD_DIR/XIOS/lib -L$INSTALL_DIR/lib -L/usr/lib -lstdc++"
+ENV CPPFLAGS "-I$INSTALL_DIR/include -I/usr/include"
+ENV LD_LIBRARY_PATH $INSTALL_DIR/lib:$INSTALL_DIR/lib64:$LD_LIBRARY_PATH
+# Path to PSyclone configuration file
+ENV PSYCLONE_CONFIG /usr/local/share/psyclone/psyclone.cfg
+#
+# Adds config file for MPICH for Sarus on Piz Daint
+RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
+ && ldconfig
+#
+# For most applications one OMP thread is enough (can be set in batch submit script)
+ENV OMP_NUM_THREADS 1
+#
+# Copy LFRic trunk inside the container
+COPY LFRic_trunk.tar .
+# Unpack LFRic trunk
+RUN tar -xf LFRic_trunk.tar \
+# Navigate to "gravity_wave" directory and build application
+ && cd LFRic_trunk/miniapps/gravity_wave \
+ && make build -j \
+# Navigate to example directory to run the application from
+ && cd example
+#
+# Paths to executables and example directory
+ENV PATH $HOME/LFRic_trunk/miniapps/gravity_wave/bin:$PATH
+WORKDIR $HOME/LFRic_trunk/miniapps/gravity_wave/example
+\end{Verbatim}
+
+The above template was saved as \texttt{lfric\_gwave.docker} and built with the
+command below:
+
+\begin{Verbatim}[fontsize=\small]
+docker build --network=host --add-host $HOSTNAME:127.0.0.1 -f \
+  lfric_gwave.docker -t lfric-gwave:gnu .
+\end{Verbatim}
+
+As for the Gungho benchmark, the template starts the build from the
+\texttt{lfric-deps:gnu} Docker container.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Library versions and settings}\label{lib_set}
+
+\begin{itemize}
+
+\item All libraries were dynamically linked to make sure that the LFRic container
+will use the optimised libraries of the host system:\ the
+\href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env.sh}
+{\texttt{install\_lfric\_env.sh}} script contains commented out instructions for a static
+build if required.
+
+\item The MPICH version used in the current Met Office (MO) LFRic build system
+is 3.3. Here we used version 3.1.4 to ensure ABI compatibility with the Cray MPI
+library available on Piz Daint: please have a look at the
+\href{https://wiki.mpich.org/mpich/index.php/ABI_Compatibility_Initiative}{MPICH Wiki}
+for more information on the ABI Compatibility Initiative.
+
+\item HDF5, NetCDF, NetCDF-Fortran, NetCDF-C++ and pFUnit are also slightly
+older than in the current MO LFRic build system, whereas
+\href{https://www.dkrz.de/redmine/projects/yaxt/}{YAXT} is the same
+version. To install the same versions of the above packages that are currently
+used by LFRic, please use the alternative install script (dynamic linking
+example) \newline
+\href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/install_lfric_env_current.sh}
+{\texttt{install\_lfric\_env\_current.sh}}.
+
+\item \href{https://forge.ipsl.jussieu.fr/ioserver}{XIOS} is a tricky beast to
+build as not every revision/release will work with every compiler and/or every
+compiler release. For instance, the MO GCC 6.1.0 environment uses revision 1537
+which is too old for GCC 7.4.0 used here. Unfortunately, the current XIOS trunk
+produces a build which segfaults at runtime for the GCC release and other
+libraries used in this container. There is, however, a relatively recent
+revision before the segfault bug that was appropriate for this container.
+
+\item Here we used the same PSyclone release (1.7.0) that is used by the current
+LFRic trunk (as of 15 December 2019), built with Python 2 environment (the move
+to Python 3 and the newest PSyclone 1.8.1 is under way). Not every PSyclone
+release will work with every LFRic trunk revision. The LFRic--PSyclone
+compatibility table is give in this
+\href{https://code.metoffice.gov.uk/trac/lfric/wiki/LFRicTechnical/VersionsCompatibility}
+{LFRic wiki (requires login)}.
+
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Tips \& tricks}\label{tips_tricks}
+%
+%%%%%%%%%%%%%%%%%%%%
+%
+\subsubsection{Libraries}\label{libraries_tips_tricks}
+%
+\begin{itemize}
+
+\item The container tool
+\href{https://user.cscs.ch/tools/containers/sarus/}{Sarus} supported on Piz Daint
+can add the proper hook to the host MPI library if the command \texttt{ldconfig}
+has been run to configure dynamic linker run-time bindings. Since we have
+installed the MPICH library in a non-default location, the command \texttt{ldconfig}
+would not be able to find the library in the custom path within the container.
+Therefore, before running \texttt{ldconfig} we added the path of MPICH to
+\texttt{/etc/ld.so.conf.d/mpich.conf} as in the example below (please look
+\href{https://unix.stackexchange.com/questions/425251/using-ldconfig-and-ld-so-conf-versus-ld-library-path}
+{here} for more information):
+\begin{Verbatim}[fontsize=\small]
+# Adds config file for MPICH for Sarus on Piz Daint
+RUN echo "/usr/local/src/gnu_env/usr/lib" > /etc/ld.so.conf.d/mpich.conf \
+ && ldconfig
+\end{Verbatim}
+
+\item Some libraries (e.g.\ YAXT) perform a test run of a minimal MPI code
+during the configure step of the installation procedure:\ the test might fail
+within the Docker container if the local hostname cannot be resolved correctly.
+In order to do that, the local hostname should be available in the file
+\texttt{/etc/hosts}, which can be achieved adding the option
+\texttt{--add-hostname \$HOSTNAME:127.0.0.1} to Docker build command. If this
+solution does not work, one needs to edit the \texttt{/etc/hosts} file of the
+Docker container directly using \texttt{docker run} and commit the change with
+\texttt{docker commit}, since editing the \texttt{/etc/hosts} file is not
+possible within the Dockerfile. For more details, please check
+\href{https://stackoverflow.com/questions/23112515/mpich2-gethostbyname-failed/23118973}
+{this link}.
+
+\item PSyclone configuration file \texttt{psyclone.cfg} can end up in different
+locations during PSyclone installation. Please see
+\href{https://psyclone.readthedocs.io/en/stable/getting_going.html#configuration}
+{PSyclone configuration documentation} for the most common locations. If none of
+those work, try the good old \texttt{find / -name "psyclone.cfg"} search.
+
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%
+%
+\subsubsection{LFRic code}\label{lfric_tips_tricks}
+%
+\begin{itemize}
+
+\item Once the LFRic trunk was checked out, the \texttt{Makefile}s of the tested
+Gungho and Gravity Wave applications needed to be modified from
+\begin{Verbatim}[fontsize=\small]
+export EXTERNAL_DYNAMIC_LIBRARIES = yaxt yaxt_c netcdff netcdf hdf5 \
+                                    $(CXX_RUNTIME_LIBRARY)
+export EXTERNAL_STATIC_LIBRARIES = xios
+\end{Verbatim}
+to
+\begin{Verbatim}[fontsize=\small]
+export EXTERNAL_DYNAMIC_LIBRARIES =
+export EXTERNAL_STATIC_LIBRARIES = yaxt yaxt_c xios netcdff netcdf \
+                                   hdf5_hl hdf5 z :libstdc++.a
+\end{Verbatim}
+for the build to complete. For this reason we made changes to \texttt{Makefile}s
+outside the container and then copied the tarballs into the container.
+
+\item By default, running command-line \texttt{make build} builds LFRic with MPI
+but not OpenMP. To enable PSyclone OpenMP optimisations, the environment
+variable \texttt{LFRIC\_TARGET\_PLATFORM} was set to \texttt{meto-spice} value for
+the Gungho benchmark.
+
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\section{Running LFRic Docker container on Piz Daint}\label{lfric_pizdaint}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Gungho benchmark}\label{gungho_pizdaint}
+
+The Docker image of the LFRic Gungho benchmark was loaded with \texttt{sarus}
+and run on Piz Daint. The Slurm batch script below was used as a template for
+running the benchmark.
+
+\begin{Verbatim}[fontsize=\small]
+#!/bin/bash -l
+#SBATCH --job-name=job_name
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=6
+#SBATCH --cpus-per-task=1
+#SBATCH --constraint=gpu
+#SBATCH --output=lfric-gungho.%j.out
+#SBATCH --error=lfric-gungho.%j.err
+
+module load daint-gpu
+module load sarus
+module unload xalt
+srun sarus run --mount=type=bind,source=$PWD/input/gungho,\
+     destination=/usr/local/src/LFRic_trunk/gungho/example \
+     --mpi load/library/lfric-gungho:gnu \
+     bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && \
+     gungho ./gungho_configuration.nml
+\end{Verbatim}
+
+The local folder \texttt{input/gungho} is a copy of the folder
+\texttt{LFRIC\_trunk/gungho/example} and contains:
+
+\begin{itemize}
+
+\item Namelist \texttt{gungho\_configuration.nml};
+
+\item Four mesh files required for the multigrid preconditioner
+(\texttt{l\_multigrid} flag set to \texttt{.true.}\ in the \texttt{\&multigrid}
+namelist) used in Gungho (\texttt{mesh24.nc}, \texttt{mesh12.nc},
+\texttt{mesh6.nc} and \texttt{mesh3.nc});
+
+\item \texttt{iodef.xml} file required for parallel IO.
+
+\end{itemize}
+
+The IO file, however, was not used as the \texttt{use\_xios\_io} flag in the
+\texttt{\&io} namelist was set to \texttt{.false.}. If no diagnostic output
+(e.g.\ plots) are required, it is recommended that the \texttt{write\_diag} flag
+in the \texttt{\&io} namelist is also set to \texttt{.false.}. All input
+files are available as the
+\href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gungho.tar.gz}
+{Gungho input archive} in the
+\href{https://github.com/eth-cscs/ContainerHackathon/tree/master/LFRIC/docker}
+{Hackathon LFRic Docker repository}. The mesh files and related namelists
+required for the Gungho higher resolution tests below (\texttt{C48},
+\texttt{C96} and \texttt{C192} mesh configurations), were produced as described
+in Appendix~\ref{lfric_mesh_tools}.
+
+The Gungho application produces a single text output for a serial run (single
+MPI task) or \texttt{PET**.gungho.Log} outputs for multiple MPI tasks, as well
+as checksums stored in \texttt{gungho-checksum.txt} output. Depending on the
+\texttt{\&io} namelist's settings, it also produces diagnostic outputs such as
+
+\begin{itemize}
+
+\item Overall application run times stored in \texttt{timer.txt} (set by the
+\texttt{subroutine\_timers} flag to \texttt{.true.});
+
+\item Overall application counter of halo calls stored in
+\texttt{halo\_calls\_counter.txt} (set by the \texttt{subroutine\_counters} flag
+to \texttt{.true.});
+
+\item Plots of the results (set by the \texttt{write\_diag} and
+\texttt{diagnostic\_frequency} options);
+
+\item XIOS client output and error logs if \texttt{use\_xios\_io} flag is set to
+\texttt{.true.}\ (\texttt{xios\_client.out} and \texttt{xios\_client.err} for a
+serial run/single MPI task; \texttt{xios\_client\_**.out} and
+\texttt{xios\_client\_**.err} for multiple MPI tasks).
+
+\end{itemize}
+%
+%%%%%%%%%%%%%%%%%%%%
+%
+\subsubsection{Results}\label{gungho_pizdaint_results}
+
+Tables~\ref{gungho_table_1}-\ref{gungho_table_3} show times for completing
+the Gungho benchmark on Piz Daint Cray XC50 with different mesh resolutions,
+number of nodes, MPI tasks and OpenMP threads. Table~\ref{gungho_table_4} shows
+results of the additional tests for the \texttt{C24} mesh configuration,
+run with 1 MPI task and on 1, 2 and 4 OpenMP threads, respectively.
+
+The times are from the LFRic \texttt{timer.txt} outputs and Slurm job outputs.
+Note that the Slurm completion times are longer, as they include overheads of
+job submission (prologue and epilogue).
+
+\begin{table}[!h]
+\begin{tabular}{ |c|c|c|c|c| }
+\hline
+\multirow{3}{*}{OMP threads} & \multicolumn{4}{ |c| }{C24, 1 node} \\ \cline{2-5}
+           & \multicolumn{2}{ |c| }{LFRic timer}  &\multicolumn{2}{ |c| }{Slurm time} \\ \cline{2-5}
+           & 1 MPI p.n. & 6 MPI p.n. & 1 MPI p.n. & 6 MPI p.n. \\
+\hline
+1          & 328.91 s   & 72.22 s    & 00:08:06 (486 s) & 00:01:56 (116 s) \\
+\hline
+2          & 185.56 s   & 44.33 s    & 00:03:24 (204 s) & 00:00:57 (57 s) \\
+\hline
+\end{tabular}
+\caption{Gungho benchmark runtimes on Piz Daint for \texttt{C24} mesh
+configuration, run on 1 compute node with 1 and 6 MPI tasks per node,
+respectively.}\label{gungho_table_1}
+\end{table}
+
+\begin{table}[!h]
+\begin{tabular}{ |c|c|c|c|c| }
+\hline
+\multirow{3}{*}{OMP threads} & \multicolumn{4}{ |c| }{C48, 1 node} \\ \cline{2-5}
+           & \multicolumn{2}{ |c| }{LFRic timer}  &\multicolumn{2}{ |c| }{Slurm time} \\ \cline{2-5}
+           & 1 MPI p.n. & 6 MPI p.n. & 1 MPI p.n. & 6 MPI p.n. \\
+\hline
+1          & 1354.05 s  & 280.76 s   & 00:22:51 (1371 s) & 00:05:00 (300 s) \\
+\hline
+2          & 776.13 s   & 177.2 s    & 00:13:18 (798 s)  & 00:03:26 (206 s) \\
+\hline
+\end{tabular}
+\caption{Gungho benchmark runtimes on Piz Daint for \texttt{C48} mesh
+configuration, run on 1 compute node with 1 and 6 MPI tasks per node,
+respectively.} \label{gungho_table_2}
+\end{table}
+
+\begin{table}[!h]
+\begin{tabular}{ |c|c|c|c|c| }
+\hline
+\multirow{3}{*}{OMP threads} & \multicolumn{2}{ |c| }{C96, 6 nodes, 6 MPI p.n.}
+                             & \multicolumn{2}{ |c| }{C192, 6 nodes, 6 MPI p.n.} \\ \cline{2-5}
+           &  LFRic timer  &  Slurm time        &  LFRic timer  &  Slurm time     \\ \cline{2-5}
+\hline
+1          &  194.59 s     &  00:03:33 (213 s)  &  801.52 s     &  00:13:40 (820 s)  \\
+\hline
+2          &  128.43 s     &  00:02:57 (177 s)  &  517.95 s     &  00:08:57 (537 s)  \\
+\hline
+\end{tabular}
+\caption{Gungho benchmark runtimes on Piz Daint for \texttt{C96} and
+\texttt{C192} mesh configurations, respectively, run on 6 compute nodes with 6
+MPI tasks per node.} \label{gungho_table_3}
+\end{table}
+
+\begin{table}[!h]
+\begin{tabular}{ |c|c|c| }
+\hline
+\multirow{2}{*}{OMP threads} & \multicolumn{2}{ |c| }{C24, 1 node, 1 MPI p.n.} \\ \cline{2-3}
+           &  LFRic timer    &  Slurm time       \\
+\hline
+1          &  394.76 s       &  00:06:58 (418 s) \\
+\hline
+2          &  231.69 s 	     &  00:04:32 (272 s)  \\
+\hline
+4          &  153.93 s 	     &  00:03:14 (194 s)  \\
+\hline
+\end{tabular}
+\caption{Gungho benchmark runtimes on Piz Daint for \texttt{C24} mesh
+configuration, run on 1 compute node with 1 MPI task per node and 1, 2 and
+4 OpenMP threads, respectively.} \label{gungho_table_4}
+\end{table}
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Gravity Wave benchmark on Piz Daint}\label{gwave_pizdaint}
+
+The Docker image of the LFRic Gravity Wave benchmark was loaded with
+\texttt{sarus} and run on Piz Daint. The Slurm batch script below was used as a
+template for running the benchmark.
+
+\begin{Verbatim}[fontsize=\small]
+#!/bin/bash -l
+#SBATCH --job-name=lfric-gwave
+#SBATCH --time=00:30:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=1
+#SBATCH --partition=normal
+#SBATCH --constraint=gpu
+
+module load daint-gpu
+module load sarus
+module unload xalt
+srun sarus run \
+     --mount=type=bind,source=$PWD/input/gwave,\
+     destination=/usr/local/src/LFRic_trunk/gwave/example \
+     --mpi load/library/lfric-gwave:gnu \
+     bash -c "export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK && \
+     gravity_wave ./gravity_wave_configuration.nml"
+ \end{Verbatim}
+
+The local folder \texttt{input/gwave} contains the namelist
+\texttt{gravity\_wave\_configuration.nml} and the mesh file \texttt{mesh24.nc}:\
+both files are available in the
+\href{https://github.com/eth-cscs/ContainerHackathon/blob/master/LFRIC/docker/input-gwave.tar.gz}
+{Gravity Wave input archive} of the
+\href{https://github.com/eth-cscs/ContainerHackathon/tree/master/LFRIC/docker}
+{Hackathon LFRic Docker repository}.
+This folder is a trimmed-down copy of the folder
+\texttt{LFRIC\_trunk/miniapps/gravity\_wave/example}. There are also other input
+files present in the LFRic repository:\ \texttt{mesh12.nc}, \texttt{mesh6.nc} and
+\texttt{mesh3.nc} (for the multigrid preconditioner) and \texttt{iodef.xml}
+(for parallel IO). They are not present in the \texttt{input/gwave} archive as
+neither \texttt{l\_multigrid} nor \texttt{use\_xios\_io} flags were set to
+\texttt{.true.}\ for the Piz Daint run.
+
+The Gravity Wave application produces outputs similar to the Gungho application
+depending on the namelists' settings. On a single Piz Daint Cray XC50 node the
+benchmark took around 5 minutes to complete on a single MPI task (truncated
+output below).
+
+\begin{Verbatim}[fontsize=\small]
+Batch Job Summary Report for Job "lfric-gwave" (18507334) on daint
+---------------------------------------------------------------
+Start                End                  Elapsed     Timelimit
+-------------------  -------------------  ----------  ---------
+2019-12-04T12:06:38  2019-12-04T12:11:50  00:05:12    01:00:00
+---------------------------------------------------------------
+Username    Account     Partition   NNodes   Energy
+----------  ----------  ----------  ------  --------------
+hck01       hck         normal           1   29.18K joules
+\end{Verbatim}
+
+%
+\section{Summary}\label{summary}
+
+The LFRic Docker containers for Gungho and Gravity Wave benchmark were built
+inside the Ubuntu 18.04 virtual environment on a laptop and then deployed and
+run on Piz Daint using the local libraries. Building containers was somewhat
+challenging due to the LFRic build dependencies and quirks of the Ubuntu virtual
+machine. A Docker container for only the libraries and build dependencies needed
+by the code seems as a very useful tool, for both building benchmark containers
+and providing LFRic software stack to collaborators who may not have access to
+the requirements or expertise to build the environment.
+
+Running the Docker containers with Sarus on Piz Daint showed to be relatively
+straightforward in comparison with the process of building them. The Gungho
+benchmark was successfully run with different mesh resolutions, number of nodes,
+MPI tasks and OpenMP threads. The results show good scaling, with the actual
+runtimes shorter than the Slurm completion times as expected.
+
+The Met Office has been exploring various approaches for containerisation
+of its models and the experiences from this hackathon will be very useful in
+coming up with the optimal strategies for different applications.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{thebibliography}{unsrt}
+%
+\bibitem{lfricpaper} Adams SV, Ford RW, Hambley M, Hobson JM, Kavcic I, Maynard
+CM, Melvin T, Mueller EH, Mullerworth S, Porter AR, Rezny M, Shipway BJ and
+Wong R (2019):\ \href{https://doi.org/10.1016/j.jpdc.2019.02.007}
+{\em LFRic:\ Meeting the challenges of scalability and performance portability
+in Weather and Climate models.} Journal of Parallel and Distributed Computing.
+%
+\bibitem{GungHoDyn} \href{https://www.metoffice.gov.uk/research/foundation/dynamics/next-generation}
+{\em GungHo - a next generation atmospheric dynamical core for weather and
+climate modelling.} Accessed:\ 15 December 2019.
+%
+\bibitem{MOmodel} \href{https://www.metoffice.gov.uk/research/approach/modelling-systems/lfric}
+{\em LFRic - a modelling system fit for future computers.}
+Accessed:\ 15 December 2019.
+%
+\bibitem{MOresnews} \href{https://www.metoffice.gov.uk/research/news/2019/gungho-and-lfric}
+{\em Next generation atmospheric model development.} Accessed:\ 15 December 2019.
+\end{thebibliography}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\appendix
+
+\section{LFRic mesh generation}\label{mesh_generation}
+
+This section describes how to generate higher resolution cubed-sphere meshes
+used in the LFRic Gungho runs on Piz Daint (see section~\ref{gungho_pizdaint}
+for more details on the runs). To generate the required meshes, we used the
+\texttt{lfric-gungho:gnu} Docker container (see section~\ref{lfric_docker}
+for the container build instructions).
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{LFRic mesh tools}\label{lfric_mesh_tools}
+
+LFRic application \texttt{mesh\_tools} (see section~\ref{lfric_repo} for more
+details on LFRic code structure) contains all prerequisites for the generation
+of cubed-sphere and biperiodic Cartesian meshes (we only used the former in the
+Piz Daint tests).
+
+Running \texttt{make build} or \texttt{make build -j} in the \texttt{mesh\_tools}
+directory produces two executables for mesh generation in the \texttt{bin/}
+directory, \texttt{cubedsphere\_mesh\_generator} and
+\texttt{planar\_mesh\_generator}, and the executable \texttt{summarise\_ugrid}
+that summarises mesh files information (LFRic stores meshes in UGRID format).
+
+Cubed-sphere or planar meshes can then be produced by running
+\begin{Verbatim}[fontsize=\small]
+../bin cubedsphere_mesh_generator cubedsphere.nml
+\end{Verbatim}
+or
+\begin{Verbatim}[fontsize=\small]
+../bin planar_mesh_generator planar_mesh.nml
+\end{Verbatim}
+from the \texttt{mesh\_tools/example} directory. The \texttt{C48} mesh can be
+generated by copying the \texttt{cubedsphere.nml} to
+\texttt{cubedsphere\_C48.nml} namelist, modifying the new namelist as shown below
+\begin{Verbatim}[fontsize=\small]
+&cubedsphere_mesh_generator
+  mesh_filename = 'mesh_C48.nc'
+  nmeshes       = 1
+  mesh_names    = 'dynamics'
+  edge_cells    = 48
+  smooth_passes = 0
+/
+\end{Verbatim}
+and then running
+\begin{Verbatim}[fontsize=\small]
+../bin cubedsphere_mesh_generator cubedsphere_C48.nml
+\end{Verbatim}
+from the \texttt{mesh\_tools/example} directory. The \texttt{C96} and
+\texttt{C192} meshes are also produced in a similar way.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Using LFRic container for mesh generation}\label{lfric_container_mesh}
+
+To build the mesh generation executables, we navigated to the
+\texttt{LFRic\_trunk/mesh\_tools} directory in the \texttt{lfric-gungho:gnu}
+container and modified the \texttt{Makefile} from
+\begin{Verbatim}[fontsize=\small]
+export EXTERNAL_DYNAMIC_LIBRARIES = netcdff netcdf hdf5 yaxt yaxt_c
+\end{Verbatim}
+to
+\begin{Verbatim}[fontsize=\small]
+export EXTERNAL_DYNAMIC_LIBRARIES =
+export EXTERNAL_STATIC_LIBRARIES = netcdff netcdf hdf5 yaxt yaxt_c
+\end{Verbatim}
+before running \texttt{make build -j} (similar \texttt{Makefile} modifications
+were also required for the Gungho and Gravity Wave benchmarks;\ see
+section~\ref{lfric_tips_tricks} for details). The required mesh files,
+\texttt{C48}, \texttt{C96} and \texttt{C192}, were then generated as described
+above.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Higher resolution Gungho benchmark on Piz Daint}\label{lfric_pizdaint_high}
+
+The generated mesh files were copied from the LFRic Gungho container to the host
+Ubuntu 18.04 virtual environment platform in order to be transferred to
+Piz Daint for the runs described in section~\ref{lfric_pizdaint}.
+
+Files can be copied from a Docker container to the host platform by using command
+\begin{Verbatim}[fontsize=\small]
+docker cp <containerId>:/file/path/within/container /host/path/target
+\end{Verbatim}
+where \texttt{docker ps} gives the container ID.
+
+Running Gungho with multigrid preconditioner requires four-component mesh chain:\
+base mesh and three lower-resolution meshes, each one twice as coarse as the
+mesh before. Hence, running \texttt{C48} jobs required mesh files for the
+\texttt{C48} base mesh and \texttt{C24}, \texttt{C12} and \texttt{C6} coarser
+resolution meshes. It also required modifying the \texttt{gungho\_namelist.nml}
+input file as shown below.
+
+\begin{itemize}
+
+\item \texttt{filename} option in the \texttt{\&base\_mesh} namelist was modified from
+\begin{Verbatim}[fontsize=\small]
+filename        = 'mesh_C24.nc'
+\end{Verbatim}
+to
+\begin{Verbatim}[fontsize=\small]
+filename        = 'mesh_C48.nc'
+\end{Verbatim}
+
+\item \texttt{ugrid} option in the \texttt{\&multigrid} namelist was modified from
+\begin{Verbatim}[fontsize=\small]
+ugrid      = 'prime', 'mesh_C12.nc', 'mesh_C6.nc', 'mesh_C3.nc'
+\end{Verbatim}
+to
+\begin{Verbatim}[fontsize=\small]
+ugrid      = 'prime', 'mesh_C24.nc', 'mesh_C12.nc', 'mesh_C6.nc'
+\end{Verbatim}
+For easier work the modified namelist input file was saved as \newline
+\texttt{gungho\_configuration\_C48.nml}. The higher resolution (\texttt{C96} and
+\texttt{C192}) mesh chains and namelist input files were generated in a similar
+way and then transferred to Piz Daint.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\subsection{Higher resolution Gungho benchmark inside the container}\label{lfric_container_high}
+
+The generated mesh files can be copied into the \texttt{LFRic\_trunk/gungho/example}
+directory inside the LFRic Gungho container. After modifying the namelist input
+files as shown above, simply run e.g.\ \texttt{C48} configuration as
+\begin{Verbatim}[fontsize=\small]
+../bin/gungho gungho_configuration_C48.nml
+\end{Verbatim}
+in serial or
+\begin{Verbatim}[fontsize=\small]
+mpirun -np $MPI_TASKS ../bin/gungho gungho_configuration_C48.nml
+\end{Verbatim}
+for parallel runs (it is recommended to have multiples of 6 \texttt{MPI\_TASKS}
+for the cubed-sphere runs). The container changes need to be committed so that
+the generated meshes and namelist files are saved for later, either in the same
+or in a new container.
+
+\end{itemize}
+
+\end{document}

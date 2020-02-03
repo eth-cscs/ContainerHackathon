@@ -1,35 +1,3 @@
-The teams are expected to do deliver a final report after the hackathon. Please
-note that a report has to be delivered by each team before the end of the
-hackathon.
-
-Here is a breakdown of the report with more details:
-
-A single paragraph abstract with the application description.
-
-A short overview of the application (without mathematics!)
-
-Break down of the containerisation approach:
-
-Explain the starting point (e.g., CPU-code compiled with XXX compiler, GPU access using CUDA, etc)
-
-Shortly describe the test case that verifies the code is functioning correctly
-
-Steps you made porting the code to a Docker container (e.g., which components ported)
-
-OPTIONAL Performance profile of the code running natively and from a container, e.g., speedup graph.
-
-A final conclusion including:
-
-Short feedback about your experiences
-
-Obstacles you encountered, and how you solved them
-
-Lessons that you would like to share with other teams, e.g., suggestions on how
-to improve the process, better documentation, etc.
-
-Last but not least, any general comments about this Container Hackathon for
-Modellers will be really useful for the organisers.
-
 # Introduction
 
 NEMO for Nucleus for European Modelling of the Ocean is a state-of-the-art modelling framework for research activities and forecasting services in ocean and climate sciences, that has been developed in a sustainable way by a European consortium since 2008.
@@ -56,6 +24,7 @@ It contains the AGRIF preprocessing program conv; the FCM build system and the I
 ## System dependencies
 
 The following package are required:
+
 * Perl interpreter
 * Fortran compiler (ifort, gfortran, pgfortran, …),
 * Message Passing Interface (MPI) implementation (e.g. OpenMPI or MPICH).
@@ -160,26 +129,22 @@ We executed both tests on Daint and on mac-os and all the validation tests have 
 The aim of this test is to verify the performance of the container when executing parallel application on parallel architectures. With these tests we compared the execution time obtained from a run using the nemo container against the execution time obtained with NEMO natively compiled on the target machine.
 We conducted a strong and weak scaling study using he gyre configuration as it allows to easily change the space resolution. We fixed the workload for each core by using a subdomain made of 152 x 69 points. The results are depicted in figure 1:
 
-*TBC – INSERT FIGURE WEAK SCALING*
 ![weak_gyre](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/weak_scaling_gyre.png)
 
 The execution time here reported does not include the time spent for the first ten time steps during which typically some I/O operations and initialization are performed and we also omitted the time spent in the last ten time steps where the output and restart files are written. In other world, the considered execution time excludes the I/O and initialization phases at all. The jump in the execution time, that we have between 6 cores and 24 cores, is because we pass from one node to two nodes but also because with 6 cores we partially saturate the node, while with 24 cores two nodes are entirely occupied. The weak scaling curve reveals that the containerization of the NEMO model does not introduce any significant penalties in the computational performance.
 
 We executed also the strong scalability analysis by using a global domain made of 2400 x 1600 points which represents the workload of a 1/8 degree model resolution. Because of memory constraints, we were able to execute this configuration by using 8 nodes (96 cores) at least. Namely, we used 96, 384 and 1536 cores.
 
-*TBC – INSERT FIGURE STRONG SCALING G=80*
 ![strong_gyre80](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_gyre_G80.png)
 
 The speedup curve is satisfying with a parallel efficiency greater than 70%. Also in this case, the I/O and the initialization phases are omitted. The tests again proved that the use of the container does not introduce any performance lost.
 
 Moreover, we performed a strong scalability test with a smaller resolution which defines a global domain with 1200 x 800 points (this represents the workload of a 1/4 degree resolution).This resolution allowed us to start the analysis with one node up to 128 nodes (1536 cores). The resulta reported in the following figure surprisingly highlighted a superlinear speedup which could be explained with a better exploitation of the memory hierarchy available in the computing nodes when the dimension of the sub domain becomes smaller. 
 
-*TBC – INSERT FIGURE STRONG SCALING G=40*
 ![strong_gyre40](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_gyre_G40.png)
 
 Finally, we used the ORCA\_ICE\_PISCES configuration for testing the performance behavior of the NEMO container when dealing with a realistic configuration taking also into account the time for reading forcing data and to periodically write the prognostic variables.
 
-*TBC – INSERT FIGURE STRONG SCALING ORCA2*
 ![strong_orca](https://raw.githubusercontent.com/eth-cscs/ContainerHackathon/master/NEMO/report/img/strong_scaling_orca2.png)
 
 
@@ -222,9 +187,9 @@ for f in `\ls GYRE*.nc | grep -v restart`; do echo $f; cdo diff $f ../REPROD_JG_
 # Restart experiments
 
 ```
-for f in `\ls *SHORT*restart*.nc`; do echo $f; f1=${f/SHORT/LONG}; cdo diff $f ../RESTART_LONG_G/$f1; done
+for f in `\ls *SHORT*restart*.nc`; do
+    echo $f; f1=${f/SHORT/LONG};
+    cdo diff $f ../RESTART_LONG_G/$f1;
+done
 ```
-
-# Scalability experiments
-
 

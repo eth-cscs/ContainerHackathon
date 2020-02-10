@@ -7,5 +7,5 @@ As specified in the ESiWACE2 Project Plan, the final deliverable contains a publ
 
 ## Contents in this directory
 
-- Deliverable D2.8 report, without individual hackathon team reports (these can be found in the project directories.
+- Deliverable D2.8 report, without individual hackathon team reports (these can be found in the project directories).
 - Participant Survey results 

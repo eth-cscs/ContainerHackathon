@@ -9,8 +9,10 @@ access, and sharing of array-oriented scientific data."""
 toolchain = {'name': 'PGI', 'version': '19.10-GCC-7.3.0-2.30'}
 toolchainopts = {'pic': True}
 
-source_urls = ['ftp://ftp.unidata.ucar.edu/pub/netcdf/', 'ftp://ftp.unidata.ucar.edu/pub/netcdf/old']
-sources = [SOURCELOWER_TAR_GZ]
+# source_urls = ['ftp://ftp.unidata.ucar.edu/pub/netcdf/', 'ftp://ftp.unidata.ucar.edu/pub/netcdf/old']
+# sources = [SOURCELOWER_TAR_GZ]
+source_urls = ['https://github.com/Unidata/netcdf-fortran/archive/']
+sources = ['v%(version)s.tar.gz']
 
 dependencies = [
     ('netCDF', '4.6.1'),

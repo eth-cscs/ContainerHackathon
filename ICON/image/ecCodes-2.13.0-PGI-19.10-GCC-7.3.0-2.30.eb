@@ -3,12 +3,6 @@ easyblock = 'CMakeMake'
 
 name = 'ecCodes'
 version = '2.13.0'
-py_maj_ver = '3'
-py_min_ver = '7'
-py_rev_ver = '4'
-pyshortver = '%s.%s' % (py_maj_ver, py_min_ver)
-pyver = '%s.%s' % (pyshortver, py_rev_ver)
-versionsuffix = '-python%s' % py_maj_ver
 
 homepage = 'https://confluence.ecmwf.int/display/ECC/ecCodes+Home'
 description = """ecCodes is a package developed by ECMWF which provides an application programming interface
